@@ -22,6 +22,7 @@ export default function BasicEditor() {
             id: 'panel-top',
             el: '.panel__top',
         });
+
         editor.Panels.addPanel({
             id: 'panel-right',
             el: '.panel__view-buttons',
@@ -71,13 +72,13 @@ export default function BasicEditor() {
                 {
                     id: 'open-style-manager',
                     label: `<i class="fa fa-paint-brush" title="Style Manager"></i>`,
-                    command: 'core:open-sm',
+                    command: 'open-sm',
                     togglable: true,
                 },
                 {
                     id: 'open-layer-manager',
                     label: `<i class="fa fa-clone" title="Layer Manager"></i>`,
-                    command: 'core:open-layers',
+                    command: 'open-layers',
                     togglable: true,
                 },
                 {
@@ -96,7 +97,7 @@ export default function BasicEditor() {
         });
         
         // Commands
-         editor.Panels.addPanel({
+        editor.Panels.addPanel({
             id: 'panel-switcher',
             el: '.gjs-pn-views',
             buttons: [
@@ -136,6 +137,7 @@ export default function BasicEditor() {
                 },
             ],
         });
+
         editor.Commands.add('set-device-desktop', {
             run: (editor) => editor.setDevice('Desktop'),
         });
@@ -146,9 +148,7 @@ export default function BasicEditor() {
             run: (editor) => editor.setDevice('Tablet'),
         });
        
-      
-
-
+    
         editor.Commands.add('custom:toggle-code', {
             run(editor) {
                 const modal = editor.Modal;
@@ -216,12 +216,6 @@ export default function BasicEditor() {
                 panel.style.display = 'none';
                 }
             }
-        });
-
-        editor.BlockManager.getCategories().add({
-            id: 'Layout',
-            label: 'Layout  ',
-            open: true, 
         });
 
         editor.BlockManager.add('1-column', {
@@ -591,7 +585,6 @@ export default function BasicEditor() {
                 ]
             }
         });
-
      
         // Auto-open properties when block dropped
         editor.on('block:drag:stop', (component) => {
