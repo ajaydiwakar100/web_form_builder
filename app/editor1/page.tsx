@@ -9,65 +9,19 @@ export default function BasicEditor() {
             container: '#gjs',
             fromElement: true,
             panels: { defaults: [] },
-            deviceManager: {
-                devices: [
-                    {
-                        name: 'Desktop',
-                        width: '',
-                    },
-                    {
-                        name: 'Tablet',
-                        width: '768px',
-                        widthMedia: '992px',
-                    },
-                    {
-                        name: 'Mobile',
-                        width: '320px',
-                        widthMedia: '480px',
-                    },
-                ],
-            },
             canvas: {
-                styles: [
-                '/globals.css' // <-- public path to your CSS
-                ]
+                styles: ['/globals.css']
             },
             blockManager: {
                 appendTo: '#blocks',
             }
         });
+
+        // Header menus
         editor.Panels.addPanel({
             id: 'panel-top',
             el: '.panel__top',
         });
-
-
-        editor.Panels.addPanel({
-            id: 'panel-left',
-            el: '.panel__basic-actions',
-           buttons: [
-            {
-                id: 'device-desktop',
-                label: `<i class="fa fa-desktop"></i>`, // Font Awesome icon
-                command: 'set-device-desktop',
-                active: true,
-                togglable: false,
-            },
-            {
-                id: 'device-tablet',
-                label: `<i class="fa fa-tablet"></i>`, // Tablet icon
-                command: 'set-device-tablet',
-                togglable: false,
-            },
-            {
-                id: 'device-mobile',
-                label: `<i class="fa fa-mobile"></i>`, // Mobile icon
-                command: 'set-device-mobile',
-                togglable: false,
-            },
-        ],
-        });
-
         editor.Panels.addPanel({
             id: 'panel-right',
             el: '.panel__view-buttons',
@@ -142,6 +96,46 @@ export default function BasicEditor() {
         });
         
         // Commands
+         editor.Panels.addPanel({
+            id: 'panel-switcher',
+            el: '.gjs-pn-views',
+            buttons: [
+                {
+                    id: 'open-sm',
+                    className: 'fa fa-paint-brush',
+                    command: 'open-sm',
+                    active: true,
+                    togglable: true,
+                    attributes: { title: 'Style Manager' },
+                },
+                {
+                    id: 'open-traits',
+                    className: 'fa fa-cog',
+                    command: 'open-traits',
+                    togglable: true,
+                    attributes: { title: 'Properties' },
+                },
+                {
+                    id: 'device-desktop',
+                    className: `<i class="fa fa-desktop"></i>`,
+                    command: 'set-device-desktop',
+                    active: true,
+                    togglable: false,
+                },
+                {
+                    id: 'device-tablet',
+                    label: `<i class="fa fa-tablet"></i>`,
+                    command: 'set-device-tablet',
+                    togglable: false,
+                },
+                {
+                    id: 'device-mobile',
+                    label: `<i class="fa fa-mobile"></i>`,
+                    command: 'set-device-mobile',
+                    togglable: false,
+                },
+            ],
+        });
         editor.Commands.add('set-device-desktop', {
             run: (editor) => editor.setDevice('Desktop'),
         });
@@ -151,6 +145,10 @@ export default function BasicEditor() {
         editor.Commands.add('set-device-tablet', {
             run: (editor) => editor.setDevice('Tablet'),
         });
+       
+      
+
+
         editor.Commands.add('custom:toggle-code', {
             run(editor) {
                 const modal = editor.Modal;
@@ -484,11 +482,10 @@ export default function BasicEditor() {
         editor.BlockManager.add('form-checkbox', {
             label: `
                 <div style="text-align:center;">
-                <i class="fa fa-check-square" style="font-size:20px; margin-bottom:5px;"></i><br/>
+                <i class="fa fa-check-square gjs-block-map"></i><br/>
                 <span style="font-size:13px;">Checkbox</span>
                 </div>
             `,
-            category: 'Forms',
             content: {
                 tagName: 'input',
                 attributes: {
@@ -508,10 +505,101 @@ export default function BasicEditor() {
             },
         });
 
-        editor.on('load', () => {
-             editor.BlockManager.getCategories().each((cat: any) => {
-                 cat.set('open', true);
-             });
+        editor.BlockManager.add('form-radio', {
+            label: `
+                <div style="text-align:center;">
+                <i class="fa fa-dot-circle-o gjs-block-map" ></i><br/>
+                <span style="font-size:13px;">Radio</span>
+                </div>
+            `,
+            content: {
+                tagName: 'input',
+                attributes: {
+                type: 'radio',
+                name: 'radio_group',
+                value: 'option1',
+                },
+                traits: [
+                'name',
+                'value',
+                {
+                    type: 'checkbox',
+                    label: 'Checked',
+                    name: 'checked',
+                },
+                ],
+            },
+        });
+
+        editor.BlockManager.add('form-select', {
+            label: `
+                <div style="text-align:center;">
+                <i class="fa fa-sort-desc gjs-block-map"></i><br/>
+                <span style="font-size:13px;">Select</span>
+                </div>
+            `,
+            content: {
+                tagName: 'select',
+                components: [
+                { tagName: 'option', content: 'Option 1', attributes: { value: 'option1' } },
+                { tagName: 'option', content: 'Option 2', attributes: { value: 'option2' } },
+                ],
+                traits: [
+                'name',
+                ],
+            },
+        });
+        
+        editor.BlockManager.add('form-button', {
+            label: `
+                <div style="text-align:center;">
+                    <i class="fa fa-square gjs-block-map" ></i><br/>
+                    <span style="font-size:13px;">Button</span>
+                </div>
+            `,
+            content: {
+                tagName: 'button',
+                // Default content: icon + text
+                content: '<i class="fa fa-check"></i> Click Me',
+                attributes: {
+                    type: 'submit',
+                    class: 'btn',
+                },
+                traits: [
+                    {
+                        type: 'text',
+                        label: 'Text',
+                        name: 'btn-text',
+                        changeProp: true,
+                    },
+                    {
+                        type: 'select',
+                        name: 'type',
+                        label: 'Type',
+                        options: [
+                            { id: 'button', name: 'Button' },
+                            { id: 'submit', name: 'Submit' },
+                            { id: 'reset', name: 'Reset' }
+                        ]
+                    },
+                    {
+                        type: 'text',
+                        label: 'Icon (FontAwesome class)',
+                        name: 'icon-class',
+                        changeProp: true,
+                    }
+                ]
+            }
+        });
+
+     
+        // Auto-open properties when block dropped
+        editor.on('block:drag:stop', (component) => {
+            if (component) {
+            const target = component.is('wrapper') ? component.components().last() : component;
+            editor.select(target);
+            editor.runCommand('open-traits');
+            }
         });
                
         return () => editor.destroy(); // cleanup on unmount
@@ -522,6 +610,7 @@ export default function BasicEditor() {
                 <div className="panel__top">
                 <div className="panel__left">
                     <div className="panel__basic-actions"></div>
+                   
                 </div>
                 <div className="panel__right">
                     <div className="panel__view-buttons"></div>
@@ -538,6 +627,6 @@ export default function BasicEditor() {
                     <div id="blocks" className='blocks-panel'></div> 
                </div>
             </div>
-            </div>
+        </div>
     );
 }
