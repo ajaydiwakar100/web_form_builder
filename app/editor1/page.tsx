@@ -1,41 +1,17 @@
 'use client'; 
 import 'grapesjs/dist/css/grapes.min.css';
-import grapesjs from 'grapesjs';
+import grapesjs, { Category } from 'grapesjs';
 import { useEffect } from 'react';
 
 export default function BasicEditor() {
     useEffect(() => {
 
-        // Top Right panel buttons
-        const buttons = [
-            { id: 'view-components', label: `<i class="fa fa-square" title="Components"></i>`, command: 'sw-visibility', togglable: true },
-            { id: 'view-style', label: `<i class="fa fa-expand" title="Toggle Fullscreen"></i>`, command: 'custom:toggle-fullscreen', togglable: true },
-            { id: 'view-code', label: `<i class="fa fa-code" title="Code View"></i>`, command: 'custom:toggle-code', togglable: false },
-            { id: 'undo', label: `<i class="fa fa-undo" title="Undo"></i>`, command: 'core:undo', togglable: false },
-            { id: 'redo', label: `<i class="fa fa-repeat" title="Redo"></i>`, command: 'core:redo', togglable: false },
-            { id: 'download', label: `<i class="fa fa-download" title="Download HTML & CSS"></i>`, command: 'custom:download', togglable: false },
-            { id: 'delete', label: `<i class="fa fa-trash" title="Clear Canvas"></i>`, command: 'custom:clear-canvas', togglable: false },
-            { id: 'open-style-manager', label: `<i class="fa fa-paint-brush" title="Style Manager"></i>`, command: 'open-sm', togglable: true },
-            { id: 'open-layer-manager', label: `<i class="fa fa-clone" title="Layer Manager"></i>`, command: 'open-layers', togglable: true },
-            { id: 'open-blocks', label: `<i class="fa fa-plus" title="Open Blocks"></i>`, command: 'toggle-blocks-panel', attributes: { title: 'Blocks' } },
-            { id: 'about-us', label: `<i class="fa fa-info-circle" title="About Us"></i>`, command: 'open-about-us', togglable: false }
-        ];
-        
-        // Device Switcher Panel
-        const devices = [
-            { id: 'open-sm',className: 'fa fa-paint-brush', command: 'open-sm',  active: true, togglable: false, attributes: { title: 'Style Manager' },},
-            { id: 'open-traits',className: 'fa fa-cog', command: 'open-traits', togglable: true, attributes: { title: 'Style Manager' },},
-            { id: 'device-desktop', command: 'set-device-desktop', icon: 'fa-desktop', active: true },
-            { id: 'device-tablet', command: 'set-device-tablet', icon: 'fa-tablet' },
-            { id: 'device-mobile', command: 'set-device-mobile', icon: 'fa-mobile' },
-        ];
-
         // Blocks - Columns BLocks
-        const columnBlocks = [
+       const columnBlocks = [
             { id: '1-column', cols: 1, labelText: '1 Column', contentTexts: ['1 Column'] },
             { id: '2-column', cols: 2, labelText: '2 Columns', contentTexts: ['Column 1', 'Column 2'] },
-            { id: '3-column', cols: 3, labelText: '3 Columns', contentTexts: ['Col 1', 'Col 2', 'Col 3'] },
-           // { id: '4-column', cols: 4, labelText: '4 Columns', contentTexts: ['Col 1', 'Col 2', 'Col 3', 'Col 4'] },
+            { id: '3-column', cols: 3, labelText: '3 Columns', contentTexts: ['Col 1', 'Col 2', 'Col 3']},
+            // { id: '4-column', cols: 4, labelText: '4 Columns', contentTexts: ['Col 1', 'Col 2', 'Col 3', 'Col 4']},
         ];
 
         // Blocks - Form elements
@@ -48,7 +24,7 @@ export default function BasicEditor() {
                         <div style="font-size: 13px;">Textbox</div>
                     </div>
                 `,
-                category: 'Layout',
+                category: 'Form',
                 content: {
                     tagName: 'input',
                     attributes: { type: 'text', placeholder: 'Enter text', class: 'gjs-block-textbox-content' },
@@ -67,7 +43,7 @@ export default function BasicEditor() {
                         <span style="font-size: 13px;">Image</span>
                     </div>
                 `,
-                category: 'Layout',
+                category: 'Form',
                 content: {
                     type: 'image',
                     attributes: { src: 'https://via.placeholder.com/300x150?text=Image', alt: 'Uploaded image' }
@@ -81,7 +57,7 @@ export default function BasicEditor() {
                         <span style="font-size:13px;">Video</span>
                     </div>
                 `,
-                category: 'Layout',
+                category: 'Extra',
                 content: { type: 'video', src: 'https://www.w3schools.com/html/mov_bbb.mp4', attributes: { controls: true } }
             },
             {
@@ -92,7 +68,7 @@ export default function BasicEditor() {
                         <span style="font-size:13px;">Map</span>
                     </div>
                 `,
-                category: 'Layout',
+                category: 'Extra',
                 content: { type: 'map' }
             },
             {
@@ -103,7 +79,7 @@ export default function BasicEditor() {
                         <span style="font-size:13px;">Form</span>
                     </div>
                 `,
-                category: 'Layout',
+                category: 'Form',
                 content: {
                     tagName: 'form',
                     attributes: { action: '#', method: 'post' },
@@ -144,7 +120,7 @@ export default function BasicEditor() {
                         <span style="font-size:13px;">Input Box</span>
                     </div>
                 `,
-                category: 'Layout',
+                category: 'Form',
                 content: {
                     tagName: 'input',
                     attributes: { type: 'text', name: 'input_name', placeholder: 'Enter value', required: true, class: 'input-box' },
@@ -163,7 +139,7 @@ export default function BasicEditor() {
                         <span style="font-size:13px;">Checkbox</span>
                     </div>
                 `,
-                category: 'Layout',
+                category: 'Form',
                 content: {
                     tagName: 'input',
                     attributes: { type: 'checkbox', name: 'checkbox_name', value: '1' },
@@ -178,7 +154,7 @@ export default function BasicEditor() {
                         <span style="font-size:13px;">Radio</span>
                     </div>
                 `,
-                category: 'Layout',
+                category: 'Form',
                 content: {
                     tagName: 'input',
                     attributes: { type: 'radio', name: 'radio_group', value: 'option1' },
@@ -193,7 +169,7 @@ export default function BasicEditor() {
                         <span style="font-size:13px;">Select</span>
                     </div>
                 `,
-                category: 'Layout',
+                category: 'Form',
                 content: {
                     tagName: 'select',
                     components: [
@@ -211,7 +187,7 @@ export default function BasicEditor() {
                         <span style="font-size:13px;">Button</span>
                     </div>
                 `,
-                category: 'Layout',
+                category: 'Form',
                 content: {
                     tagName: 'button',
                     content: '<i class="fa fa-check"></i> Click Me',
@@ -229,128 +205,24 @@ export default function BasicEditor() {
             }
         ];
 
+         // Top Right panel buttons
+        const buttons = [
+            { id: 'undo', label: `<i class="fa fa-undo" title="Undo"></i>`, command: 'core:undo', togglable: false },
+            { id: 'redo', label: `<i class="fa fa-repeat" title="Redo"></i>`, command: 'core:redo', togglable: false },
+            { id: 'download', label: `<i class="fa fa-download" title="Download HTML & CSS"></i>`, command: 'custom:download', togglable: false },
+            { id: 'delete', label: `<i class="fa fa-trash" title="Clear Canvas"></i>`, command: 'custom:clear-canvas', togglable: false },
+            { id: 'about-us', label: `<i class="fa fa-info-circle" title="About Us"></i>`, command: 'open-about-us', togglable: false }
+        ];
+
         // Initialize GrapesJS editor
         const editor = grapesjs.init({
             container: '#gjs',
-            fromElement: true,
-            panels: { defaults: [] },
+            fromElement: false,
             canvas: { styles: ['/globals.css']},
-            //blockManager: { appendTo: '#blocks'},
         });
 
-        // Panels - Top and Right
-        editor.Panels.addPanel({id: 'panel-top', el: '.panel__top'});
-        
         // Top right panel 
-        editor.Panels.addPanel({ id: 'panel-right', el: '.panel__view-buttons', buttons: buttons});
-     
-        // Responsive Devices Panel 
-        editor.Panels.addPanel({ id: 'panel-switcher', el: '.gjs-pn-views', buttons: devices});
-        
-        // Command: Responsive Devices Panel
-        editor.Commands.add('set-device-desktop', { run: e => e.setDevice('Desktop') });
-        editor.Commands.add('set-device-tablet', { run: e => e.setDevice('Tablet') });
-        editor.Commands.add('set-device-mobile', { run: e => e.setDevice('Mobile') });
-        
-        // Command: toggle-code
-        editor.Commands.add('custom:toggle-code', {
-            run(editor) {
-                const modal = editor.Modal;
-                modal.isOpen() ? modal.close() : editor.runCommand('core:open-code');
-            },
-        });
-
-        // Command: fullscreen 
-        editor.Commands.add('custom:toggle-fullscreen', {
-            run() {
-                const elem = document.documentElement;
-                document.fullscreenElement ? document.exitFullscreen() : elem.requestFullscreen().catch(console.warn);
-            },
-        });
-
-        // Command: Download
-        editor.Commands.add('custom:download', {
-            run(editor) {
-                const html = editor.getHtml();
-                const css = editor.getCss();
-                const content = `
-                <!DOCTYPE html>
-                <html>
-                    <head>
-                    <style>${css}</style>
-                    </head>
-                    <body>${html}</body>
-                </html>
-                `;
-                const blob = new Blob([content], { type: 'text/html' });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = 'page.html';
-                a.click();
-            }
-        });
-
-        // Command: Clear canvas
-        editor.Commands.add('custom:clear-canvas', {
-            run(editor) {
-                if (confirm('Are you sure you want to clear the canvas?')) {
-                editor.DomComponents.clear();
-                editor.CssComposer.clear();
-                }
-            }
-        });
-
-         editor.on('load', () => {
-            const blocksPanel = document.querySelector('.gjs-blocks') as HTMLElement;
-            if (blocksPanel) {
-                console.log('Blocks panel found!', blocksPanel);
-            } else {
-                console.warn('Blocks panel not found yet');
-            }
-        });
-        // Command: toggle blocks panel 
-        editor.Commands.add('toggle-blocks-panel', {
-            run: (editor) => {
-               
-                const blocksPanel = editor.Panels.getPanel('.gjs-blocks'); // default Blocks panel
-                alert(blocksPanel );
-                if (!blocksPanel) return;
-
-                const isOpen = blocksPanel.get('open');
-                blocksPanel.set('open', !isOpen);
-                
-                if (!isOpen) {
-                // Hide Style Manager panel
-                const stylePanel = editor.Panels.getPanel('styles'); 
-                stylePanel?.set('open', false);
-
-                // Hide Traits panel
-                const traitPanel = editor.Panels.getPanel('traits');
-                traitPanel?.set('open', false);
-                }
-            },
-        });
-
-
-        // Command: open abouts us  
-        editor.Commands.add('open-about-us', {
-            run(editor) {
-                editor.Modal.open({
-                title: 'About Us',
-                content: `
-                    <div style="padding:15px; font-size:14px; line-height:1.5;">
-                    <h3 style="margin-top:0;">About Us</h3>
-                    <p>
-                        This is your custom About Us modal.  
-                        You can write details about your project, developer info, 
-                        or even load external HTML here.
-                    </p>
-                    </div>
-                `,
-                });
-                editor.Modal.setTitle('About Us');
-            }
-        });
+        editor.Panels.addPanel({ id: 'panel-top', buttons: buttons});
 
         // Block: Dynamically create columns
         columnBlocks.forEach(block => {
@@ -360,34 +232,32 @@ export default function BasicEditor() {
             // Generate label HTML
             const label = `
                 <div style="text-align:center">
-                    <div class="gjs-block-col-${block.cols}">
-                        ${innerLines}
-                        <div style="flex: 1;"></div>
-                    </div>
-                    <div style="margin-top:5px;">${block.labelText}</div>
+                <div class="gjs-block-col-${block.cols}" style="display:flex; gap:2px;">
+                    ${innerLines}
+                    <div style="flex:1;"></div>
+                </div>
+                <div style="margin-top:5px;">${block.labelText}</div>
                 </div>
             `;
 
             // Generate content HTML
-            const contentColumns = block.contentTexts.map(text => `<div class="column gjs-block-col-2-content">${text}</div>`).join('');
-            const content = `
-                <div class="row" style="display: flex;">
-                    ${contentColumns}
-                </div>
-            `;
+            const contentColumns = block.contentTexts
+                .map(text => `<div class="column gjs-block-col-2-content" style="flex:1; border:1px solid #ccc; padding:5px; margin-right:2px;">${text}</div>`)
+                .join('');
+            const content = `<div class="row" style="display:flex;">${contentColumns}</div>`;
 
             // Add block to GrapesJS
             editor.BlockManager.add(block.id, {
                 label: label,
-                category: 'Layout',
-                content: content,
+                category: { id: 'layout', label: 'Layout', open: false },
+                content: content
             });
         });
         
         // Block: Dynamically create form elements
         formBlocks.forEach(block => editor.BlockManager.add(block.id, block));
         
-        // Auto-open properties when block dropped
+        // // Auto-open properties when block dropped
         editor.on('block:drag:stop', component => {
             if (!component) return;
             const target = component.is('wrapper') ? component.components().last() : component;
@@ -395,33 +265,18 @@ export default function BasicEditor() {
             editor.runCommand('open-traits');
         });
 
-       
-               
+        editor.on('load', () => {
+            const categories = editor.BlockManager.getCategories();
+
+            categories.each((cat: any) => { // you can replace `any` with proper type if you have @types/grapesjs
+                cat.set('open', false);
+            });
+        });
+
         return () => editor.destroy(); // cleanup on unmount
     }, []);   
     return (
-        <div>
-            <div className="editor-row">
-                <div className="panel__top">
-                <div className="panel__left">
-                    <div className="panel__basic-actions"></div>
-                   
-                </div>
-                <div className="panel__right">
-                    <div className="panel__view-buttons"></div>
-                </div>
-                </div>
-
-                <div className="editor-body" style={{ display: 'flex' }}>
-                {/* Left canvas */}
-                <div className="editor-canvas" style={{ flex: 1 }}>
-                    <div id="gjs">Your editor canvas here...</div>
-                </div>
-                
-                {/* Right sidebar (initially hidden) */}
-                {/* <div id="blocks" className='blocks-panel'></div>  */}
-               </div>
-            </div>
-        </div>
+        <div id="gjs"></div>
+    
     );
 }
