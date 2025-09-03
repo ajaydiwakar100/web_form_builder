@@ -11,7 +11,6 @@ export default function BasicEditor() {
             { id: '1-column', cols: 1, labelText: '1 Column', contentTexts: ['1 Column'] },
             { id: '2-column', cols: 2, labelText: '2 Columns', contentTexts: ['Column 1', 'Column 2'] },
             { id: '3-column', cols: 3, labelText: '3 Columns', contentTexts: ['Col 1', 'Col 2', 'Col 3']},
-            // { id: '4-column', cols: 4, labelText: '4 Columns', contentTexts: ['Col 1', 'Col 2', 'Col 3', 'Col 4']},
         ];
 
         // Blocks - Form elements
@@ -255,7 +254,16 @@ export default function BasicEditor() {
         });
         
         // Block: Dynamically create form elements
-        formBlocks.forEach(block => editor.BlockManager.add(block.id, block));
+        formBlocks.forEach(block => {
+            editor.BlockManager.add(block.id, {
+                ...block,
+                category: {
+                id: block.category,       // category ID
+                label: block.category,    // category label
+                open: block.category === 'Form' // keep Form expanded by default
+                }
+            });
+        });
         
         // // Auto-open properties when block dropped
         editor.on('block:drag:stop', component => {
