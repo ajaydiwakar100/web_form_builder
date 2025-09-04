@@ -201,7 +201,9 @@ export default function BasicEditor() {
                         { type: 'text', label: 'Icon (FontAwesome class)', name: 'icon-class', changeProp: true }
                     ]
                 }
-            }
+            },
+            { id: 'header-block', label: 'Header Banner', content: '<header class="header-banner"><h1>Welcome!</h1></header>' },
+
         ];
 
          // Top Right panel buttons
@@ -256,12 +258,7 @@ export default function BasicEditor() {
         // Block: Dynamically create form elements
         formBlocks.forEach(block => {
             editor.BlockManager.add(block.id, {
-                ...block,
-                category: {
-                id: block.category,       // category ID
-                label: block.category,    // category label
-                open: block.category === 'Form' // keep Form expanded by default
-                }
+                ...block
             });
         });
         
@@ -273,18 +270,11 @@ export default function BasicEditor() {
             editor.runCommand('open-traits');
         });
 
-        editor.on('load', () => {
-            const categories = editor.BlockManager.getCategories();
-
-            categories.each((cat: any) => { // you can replace `any` with proper type if you have @types/grapesjs
-                cat.set('open', false);
-            });
-        });
-
         return () => editor.destroy(); // cleanup on unmount
     }, []);   
     return (
-        <div id="gjs"></div>
-    
+        <div>
+            <div id="gjs"></div>
+        </div>
     );
 }
