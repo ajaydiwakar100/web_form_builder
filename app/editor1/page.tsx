@@ -202,7 +202,39 @@ export default function BasicEditor() {
                     ]
                 }
             },
-            { id: 'header-block', label: 'Header Banner', content: '<header class="header-banner"><h1>Welcome!</h1></header>' },
+            {
+                id: 'plain-header',
+                label: `
+                <div style="text-align:center;">
+                    <i class="fa fa-header gjs-block-map"></i><br/>
+                    <span style="font-size:13px;">Header</span>
+                </div>
+                `,
+                category: 'Layout',
+                content: '<header></header>',
+            },
+            {
+                id: 'plain-div',
+                label: `
+                <div style="text-align:center;">
+                    <i class="fa fa-square gjs-block-map"></i><br/>
+                    <span style="font-size:13px;">Div</span>
+                </div>
+                `,
+                category: 'Layout',
+                content: '<div></div>',
+            },
+            {
+                id: 'plain-section',
+                label: `
+                <div style="text-align:center;">
+                    <i class="fa fa-square-o gjs-block-map"></i><br/>
+                    <span style="font-size:13px;">Section</span>
+                </div>
+                `,
+                category: 'Layout',
+                content: '<section></section>',
+            },
 
         ];
 
