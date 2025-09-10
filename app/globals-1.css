@@ -76,10 +76,8 @@
     display: block;
 }
 
-.gjs-mdl-dialog {
-  width: 90vw !important;
-  max-width: none !important;
-  height: 90vh;
+.about-us-modal {
+  width: 300 !important
 }
 
 .blocks-panel {
@@ -175,17 +173,4 @@
 .gjs-block-map{
   font-size:50px; 
   margin-bottom:5px;
-}
-
-.header-banner {
-    padding-top: 35px;
-    padding-bottom: 100px;
-    color: #ffffff;
-    font-family: Helvetica, serif;
-    font-weight: 100;
-    background-image: url(https://grapesjs.com/assets/images/demos/bg-gr-v.png), url(https://grapesjs.com/assets/images/demos/work-desk.jpg);
-    background-attachment: scroll, scroll;
-    background-position: left top, center center;
-    background-repeat: repeat-y, no-repeat;
-    background-size: contain, cover;
 }
