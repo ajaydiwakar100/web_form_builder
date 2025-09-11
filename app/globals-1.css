@@ -144,7 +144,7 @@
   display: flex; border:2px solid #fff; width:50px; height:50px; margin: 0 auto;
 }
 .gjs-block-col-2-content{
-  flex: 1; padding:10px; min-height:50px;
+  flex: 1; padding:10px; min-height:20px;
 }
 
 .inner-lines{
@@ -157,20 +157,47 @@
 }
 
 .gjs-block-textbox{
-  font-size: 40px; 
+  font-size: 30px; 
   font-weight: bold; 
   margin-bottom: 5px;
 }
 .gjs-block-inage{
-  font-size: 50px; 
+  font-size: 30px; 
   margin-bottom: 5px;
 }
 .gjs-block-video{
-  font-size:50px; 
+  font-size:30px; 
   margin-bottom:5px;
 }
 
 .gjs-block-map{
-  font-size:50px; 
+  font-size:30px; 
   margin-bottom:5px;
+}
+
+/* hide content when collapsed */
+.gjs-block-category.collapsed .gjs-blocks-c {
+  display: none !important;
+}
+
+.gjs-block-category .gjs-title {
+  cursor: pointer;
+  align-items: center;
+  justify-content: flex-start; /* start from left */
+  padding: 6px 8px;
+}
+
+/* icon first on left */
+.gjs-block-category .toggle-icon {
+  order: 0;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* text after icon, pushed to right */
+.gjs-block-category .gjs-title span:not(.toggle-icon),
+.gjs-block-category .gjs-title label,
+.gjs-block-category .gjs-title div {
+  margin-left: auto;  /* pushes title text to the far right */
+  order: 1;
 }

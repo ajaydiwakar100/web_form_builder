@@ -2,38 +2,38 @@
 import 'grapesjs/dist/css/grapes.min.css';
 import grapesjs, { Category } from 'grapesjs';
 import { useEffect } from 'react';
+import type { BlockProperties } from 'grapesjs';
+
 
 export default function BasicEditor() {
     useEffect(() => {
 
         // Blocks - Columns BLocks
         const columnBlocks = [
-            { id: '1-column', cols: 1, labelText: '1 Column', contentTexts: ['1 Column'], categoryId: 'Basic' },
-            { id: '2-column', cols: 2, labelText: '2 Columns', contentTexts: ['Column 1', 'Column 2'], categoryId: 'Basic'  },
-            { id: '3-column', cols: 3, labelText: '3 Columns', contentTexts: ['Col 1', 'Col 2', 'Col 3'],categoryId: 'Basic' },
+            { id: '1-column', cols: 1, labelText: '1 Column', contentTexts: ['1 Column'] },
+            { id: '2-column', cols: 2, labelText: '2 Columns', contentTexts: ['Column 1', 'Column 2'] },
+            { id: '3-column', cols: 3, labelText: '3 Columns', contentTexts: ['Col 1', 'Col 2', 'Col 3'] },
         ];
 
         // Blocks - Form elements
-        const formBlocks = [
+        const formBlocks: BlockProperties[] = [
+            // Textbox Input
             {
                 id: 'form-textbox',
-                label: `
-                    <div style="text-align:center;">
-                        <div class="gjs-block-textbox">T</div>
-                        <div style="font-size: 13px;">Textbox</div>
-                    </div>
-                `,
+                label: '<div style="text-align:center;"><div class="gjs-block-textbox">T</div> <div style="font-size: 13px;">Text</div></div>',
                 category: 'Form',
                 content: {
-                    tagName: 'input',
-                    attributes: { type: 'text', placeholder: 'Enter text', class: 'gjs-block-textbox-content' },
-                    traits: [
-                        'name',
-                        'placeholder',
-                        { type: 'checkbox', label: 'Required', name: 'required' }
-                    ]
-                }
+                tagName: 'input',
+                attributes: { type: 'text', placeholder: 'Insert your text here', class: 'gjs-block-textbox-content' },
+                traits: [
+                    'name',
+                    'placeholder',
+                    { type: 'checkbox', label: 'Required', name: 'required' }
+                ]
+                } as any
             },
+
+            // Image
             {
                 id: 'image-upload',
                 label: `
@@ -44,21 +44,29 @@ export default function BasicEditor() {
                 `,
                 category: 'Form',
                 content: {
-                    type: 'image',
-                    attributes: { src: 'https://via.placeholder.com/300x150?text=Image', alt: 'Uploaded image' }
-                }
+                type: 'image',
+                attributes: { src: 'https://via.placeholder.com/300x150?text=Image', alt: 'Uploaded image' }
+                } as any
             },
+
+            // Video
             {
                 id: 'video-block',
+                category: 'Form',
                 label: `
                     <div style="text-align:center;">
                         <i class="fa fa-play-circle gjs-block-video"></i><br/>
                         <span style="font-size:13px;">Video</span>
                     </div>
                 `,
-                category: 'Extra',
-                content: { type: 'video', src: 'https://www.w3schools.com/html/mov_bbb.mp4', attributes: { controls: true } }
+                content: {
+                type: 'video',
+                src: 'https://www.w3schools.com/html/mov_bbb.mp4',
+                attributes: { controls: true }
+                } as any
             },
+
+            // Map
             {
                 id: 'map-block',
                 label: `
@@ -67,9 +75,11 @@ export default function BasicEditor() {
                         <span style="font-size:13px;">Map</span>
                     </div>
                 `,
-                category: 'Extra',
-                content: { type: 'map' }
+                category: 'Form',
+                content: { type: 'map' } as any
             },
+
+            // Form
             {
                 id: 'form',
                 label: `
@@ -80,37 +90,39 @@ export default function BasicEditor() {
                 `,
                 category: 'Form',
                 content: {
-                    tagName: 'form',
-                    attributes: { action: '#', method: 'post' },
+                tagName: 'form',
+                attributes: { action: '#', method: 'post' },
+                components: [
+                    {
+                    tagName: 'div',
+                    attributes: { class: 'form-group' },
                     components: [
-                        {
-                            tagName: 'div',
-                            attributes: { class: 'form-group' },
-                            components: [
-                                { tagName: 'label', content: 'Name:', attributes: { for: 'name' } },
-                                { tagName: 'input', attributes: { type: 'text', name: 'name', placeholder: 'Enter your name', required: true } }
-                            ]
-                        },
-                        {
-                            tagName: 'div',
-                            attributes: { class: 'form-group' },
-                            components: [
-                                { tagName: 'label', content: 'Email:', attributes: { for: 'email' } },
-                                { tagName: 'input', attributes: { type: 'email', name: 'email', placeholder: 'Enter your email', required: true } }
-                            ]
-                        },
-                        {
-                            tagName: 'div',
-                            attributes: { class: 'form-group' },
-                            components: [
-                                { tagName: 'label', content: 'Message:', attributes: { for: 'message' } },
-                                { tagName: 'textarea', attributes: { name: 'message', placeholder: 'Enter your message', required: true, rows: 4 } }
-                            ]
-                        },
-                        { tagName: 'button', content: 'Submit', attributes: { type: 'submit', class: 'btn-submit' } }
+                        { tagName: 'label', content: 'Name:', attributes: { for: 'name' } },
+                        { tagName: 'input', attributes: { type: 'text', name: 'name', placeholder: 'Enter your name', required: true } }
                     ]
-                }
+                    },
+                    {
+                    tagName: 'div',
+                    attributes: { class: 'form-group' },
+                    components: [
+                        { tagName: 'label', content: 'Email:', attributes: { for: 'email' } },
+                        { tagName: 'input', attributes: { type: 'email', name: 'email', placeholder: 'Enter your email', required: true } }
+                    ]
+                    },
+                    {
+                    tagName: 'div',
+                    attributes: { class: 'form-group' },
+                    components: [
+                        { tagName: 'label', content: 'Message:', attributes: { for: 'message' } },
+                        { tagName: 'textarea', attributes: { name: 'message', placeholder: 'Enter your message', required: true, rows: 4 } }
+                    ]
+                    },
+                    { tagName: 'button', content: 'Submit', attributes: { type: 'submit', class: 'btn-submit' } }
+                ]
+                } as any
             },
+
+            // Input Box
             {
                 id: 'input-box',
                 label: `
@@ -121,15 +133,17 @@ export default function BasicEditor() {
                 `,
                 category: 'Form',
                 content: {
-                    tagName: 'input',
-                    attributes: { type: 'text', name: 'input_name', placeholder: 'Enter value', required: true, class: 'input-box' },
-                    traits: [
-                        'name',
-                        'placeholder',
-                        { type: 'checkbox', label: 'Required', name: 'required' }
-                    ]
-                }
+                tagName: 'input',
+                attributes: { type: 'text', name: 'input_name', placeholder: 'Enter value', required: true, class: 'input-box' },
+                traits: [
+                    'name',
+                    'placeholder',
+                    { type: 'checkbox', label: 'Required', name: 'required' }
+                ]
+                } as any
             },
+
+            // Checkbox
             {
                 id: 'form-checkbox',
                 label: `
@@ -140,11 +154,13 @@ export default function BasicEditor() {
                 `,
                 category: 'Form',
                 content: {
-                    tagName: 'input',
-                    attributes: { type: 'checkbox', name: 'checkbox_name', value: '1' },
-                    traits: ['name', 'value', { type: 'checkbox', label: 'Checked', name: 'checked' }]
-                }
+                tagName: 'input',
+                attributes: { type: 'checkbox', name: 'checkbox_name', value: '1' },
+                traits: ['name', 'value', { type: 'checkbox', label: 'Checked', name: 'checked' }]
+                } as any
             },
+
+            // Radio
             {
                 id: 'form-radio',
                 label: `
@@ -155,11 +171,13 @@ export default function BasicEditor() {
                 `,
                 category: 'Form',
                 content: {
-                    tagName: 'input',
-                    attributes: { type: 'radio', name: 'radio_group', value: 'option1' },
-                    traits: ['name', 'value', { type: 'checkbox', label: 'Checked', name: 'checked' }]
-                }
+                tagName: 'input',
+                attributes: { type: 'radio', name: 'radio_group', value: 'option1' },
+                traits: ['name', 'value', { type: 'checkbox', label: 'Checked', name: 'checked' }]
+                } as any
             },
+
+            // Select
             {
                 id: 'form-select',
                 label: `
@@ -170,14 +188,16 @@ export default function BasicEditor() {
                 `,
                 category: 'Form',
                 content: {
-                    tagName: 'select',
-                    components: [
-                        { tagName: 'option', content: 'Option 1', attributes: { value: 'option1' } },
-                        { tagName: 'option', content: 'Option 2', attributes: { value: 'option2' } }
-                    ],
-                    traits: ['name']
-                }
+                tagName: 'select',
+                components: [
+                    { tagName: 'option', content: 'Option 1', attributes: { value: 'option1' } },
+                    { tagName: 'option', content: 'Option 2', attributes: { value: 'option2' } }
+                ],
+                traits: ['name']
+                } as any
             },
+
+            // Button
             {
                 id: 'form-button',
                 label: `
@@ -188,56 +208,170 @@ export default function BasicEditor() {
                 `,
                 category: 'Form',
                 content: {
-                    tagName: 'button',
-                    content: '<i class="fa fa-check"></i> Click Me',
-                    attributes: { type: 'submit', class: 'btn' },
-                    traits: [
-                        { type: 'text', label: 'Text', name: 'btn-text', changeProp: true },
-                        { type: 'select', label: 'Type', name: 'type', options: [
-                            { id: 'button', name: 'Button' },
-                            { id: 'submit', name: 'Submit' },
-                            { id: 'reset', name: 'Reset' }
-                        ] },
-                        { type: 'text', label: 'Icon (FontAwesome class)', name: 'icon-class', changeProp: true }
-                    ]
-                }
+                tagName: 'button',
+                content: '<i class="fa fa-check"></i> Click Me',
+                attributes: { type: 'submit', class: 'btn' },
+                traits: [
+                    { type: 'text', label: 'Text', name: 'btn-text', changeProp: true },
+                    { type: 'select', label: 'Type', name: 'type', options: [
+                    { id: 'button', name: 'Button' },
+                    { id: 'submit', name: 'Submit' },
+                    { id: 'reset', name: 'Reset' }
+                    ] },
+                    { type: 'text', label: 'Icon (FontAwesome class)', name: 'icon-class', changeProp: true }
+                ]
+                } as any
             },
+        
+            // Link block
             {
-                id: 'plain-header',
+                id: 'form-link',
+                category: 'Form',
                 label: `
-                <div style="text-align:center;">
-                    <i class="fa fa-header gjs-block-map"></i><br/>
-                    <span style="font-size:13px;">Header</span>
-                </div>
-                `,
-                category: 'Layout',
-                content: '<header></header>',
-            },
-            {
-                id: 'plain-div',
-                label: `
-                <div style="text-align:center;">
-                    <i class="fa fa-square gjs-block-map"></i><br/>
-                    <span style="font-size:13px;">Div</span>
-                </div>
-                `,
-                category: 'Layout',
-                content: '<div></div>',
-            },
-            {
-                id: 'plain-section',
-                label: `
-                <div style="text-align:center;">
-                    <i class="fa fa-square-o gjs-block-map"></i><br/>
-                    <span style="font-size:13px;">Section</span>
-                </div>
-                `,
-                category: 'Layout',
-                content: '<section></section>',
+                    <div style="text-align:center;">
+                        <i class="fa fa-link gjs-block-map"></i><br/>
+                        <span style="font-size:13px;">Link</span>
+                    </div>`,
+                content: {
+                tagName: 'a',
+                attributes: { href: '#', target: '_blank', class: 'gjs-block-link' },
+                components: 'Click here',
+                traits: [
+                    { type: 'text', label: 'Href', name: 'href', placeholder: 'https://example.com' },
+                    { type: 'text', label: 'Text', name: 'text', placeholder: 'Click here' },
+                    { type: 'checkbox', label: 'Open in new tab', name: 'target', valueTrue: '_blank', valueFalse: '_self' }
+                ]
+                } as any
             },
 
+            // Quote
+            {
+                id: 'form-quote',
+                category: 'Form',
+                label: `<div style="text-align:center;"><i class="fa fa-quote-left gjs-block-map"></i><br/><span style="font-size:13px;">Quote</span></div>`,
+                content: {
+                tagName: 'blockquote',
+                components: 'Your quote here...',
+                traits: [
+                    { type: 'text', label: 'Text', name: 'text', placeholder: 'Your quote...' },
+                    { type: 'text', label: 'Author', name: 'author', placeholder: 'Author name' }
+                ]
+                } as any
+            },
+
+            // Text Section
+            {
+                id: 'form-text-section',
+                category: 'Form',
+                label: `<div style="text-align:center;"><i class="fa fa-align-left gjs-block-map"></i><br/><span style="font-size:13px;">Text Section</span></div>`,
+                content: {
+                tagName: 'div',
+                components: 'Your text here...',
+                traits: [{ type: 'text', label: 'Text', name: 'text', placeholder: 'Enter text...' }]
+                } as any
+            },
+
+            // Textarea
+            {
+                id: 'form-textarea',
+                category: 'Form',
+                label: `<div style="text-align:center;"><i class="fa fa-edit gjs-block-map"></i><br/><span style="font-size:13px;">Textarea</span></div>`,
+                content: {
+                tagName: 'textarea',
+                attributes: { placeholder: 'Enter your message', rows: 4, class: 'gjs-block-textarea' },
+                traits: [
+                    { type: 'text', label: 'Name', name: 'name', placeholder: 'Field name' },
+                    { type: 'text', label: 'Placeholder', name: 'placeholder', placeholder: 'Enter your message' },
+                    { type: 'checkbox', label: 'Required', name: 'required' }
+                ]
+                } as any
+            }
         ];
 
+        const extraBlocks: BlockProperties[] = [
+            // Typed Input
+            {
+                id: 'extra-typed-input',
+                category: 'Extra',
+                label: `<div style="text-align:center;"><i class="fa fa-keyboard-o gjs-block-map"></i><br/><span style="font-size:13px;">Typed Input</span></div>`,
+                content: {
+                tagName: 'input',
+                attributes: { type: 'text', placeholder: 'Type something...', class: 'gjs-block-typed' },
+                traits: [
+                    { type: 'text', label: 'Name', name: 'name', placeholder: 'Field name' },
+                    { type: 'text', label: 'Placeholder', name: 'placeholder', placeholder: 'Type here...' }
+                ]
+                } as any
+            },
+
+            // Tooltip
+            {
+                id: 'extra-tooltip',
+                category: 'Extra',
+                label: `<div style="text-align:center;"><i class="fa fa-info-circle gjs-block-map"></i><br/><span style="font-size:13px;">Tooltip</span></div>`,
+                content: {
+                tagName: 'span',
+                components: 'Hover me',
+                attributes: { title: 'Tooltip text', class: 'gjs-block-tooltip' },
+                traits: [{ type: 'text', label: 'Tooltip', name: 'title', placeholder: 'Tooltip text' }]
+                } as any
+            },
+
+            // Tabs
+            {
+                id: 'extra-tabs',
+                category: 'Extra',
+                label: `<div style="text-align:center;"><i class="fa fa-folder gjs-block-map"></i><br/><span style="font-size:13px;">Tabs</span></div>`,
+                content: {
+                tagName: 'div',
+                components: `
+                    <ul class="tabs">
+                    <li class="tab active">Tab 1</li>
+                    <li class="tab">Tab 2</li>
+                    </ul>
+                    <div class="tab-content">Tab content here...</div>
+                `
+                } as any
+            },
+
+            // Countdown
+            {
+                id: 'extra-countdown',
+                category: 'Extra',
+                label: `<div style="text-align:center;"><i class="fa fa-clock-o gjs-block-map"></i><br/><span style="font-size:13px;">Countdown</span></div>`,
+                content: {
+                tagName: 'div',
+                components: '00:00:00',
+                attributes: { class: 'gjs-block-countdown' },
+                traits: [{ type: 'text', label: 'Countdown Target', name: 'target', placeholder: 'YYYY-MM-DD HH:MM:SS' }]
+                } as any
+            },
+            // Plain Header
+            {
+                id: 'plain-header',
+                category: 'Extra',
+                label: `<div style="text-align:center;"><i class="fa fa-header gjs-block-map"></i><br/><span style="font-size:13px;">Header</span></div>`,
+                content: '<header></header>' as any
+            },
+
+            // Plain Div
+            {
+                id: 'plain-div',
+                category: 'Extra',
+                label: `<div style="text-align:center;"><i class="fa fa-square gjs-block-map"></i><br/><span style="font-size:13px;">Div</span></div>`,
+                content: '<div></div>' as any
+            },
+
+            // Plain Section
+            {
+                id: 'plain-section',
+                category: 'Extra',
+                label: `<div style="text-align:center;"><i class="fa fa-square-o gjs-block-map"></i><br/><span style="font-size:13px;">Section</span></div>`,
+                content: '<section></section>' as any
+            },
+        ];
+
+    
         // Panel -Buttom
         const buttons = [
             { id: 'undo', label: `<i class="fa fa-undo" title="Undo"></i>`, command: 'core:undo', togglable: false },
@@ -268,62 +402,46 @@ export default function BasicEditor() {
             editor.Panels.addButton('options', btn);
         });
 
-        const bm = editor.BlockManager;
-
-        // 1️⃣ Create a category
-        bm.getCategories().add({ id: 'Basic', label: 'Basic', open: true });
-
-        // 2️⃣ Add a simple block
-            bm.add('1-column', {
-        label: '1 Column', // simple label for panel
-        category: 'Basic',
-        content: `
-            <details style="border:1px solid #000; padding:5px;">
-            <summary>Click to expand/collapse</summary>
-            <div style="padding:10px; border-top:1px solid #ccc;">
-                This content is inside the block. It collapses/expands on the canvas.
-            </div>
-            </details>
-        `
-        });
-
-        // // Block: Dynamically create columns
-        // columnBlocks.forEach(block => {
-        //     // Generate inner lines for label
-        //     const innerLines = block.cols > 1 ? '<div class="inner-lines"></div>'.repeat(block.cols - 1) : '';
-            
-        //     // Generate label HTML
-        //     const label = `
-        //         <div style="text-align:center">
-        //         <div class="gjs-block-col-${block.cols}" style="display:flex; gap:2px;">
-        //             ${innerLines}
-        //             <div style="flex:1;"></div>
-        //         </div>
-        //         <div style="margin-top:5px;">${block.labelText}</div>
-        //         </div>
-        //     `;
-
-        //     // Generate content HTML
-        //     const contentColumns = block.contentTexts
-        //         .map(text => `<div class="column gjs-block-col-2-content" style="flex:1; border:1px solid #ccc; padding:5px; margin-right:2px;">${text}</div>`)
-        //         .join('');
-        //     const content = `<div class="row" style="display:flex;">${contentColumns}</div>`;
-
-        //     // Add block to GrapesJS
-        //     editor.BlockManager.add(block.id, {
-        //         label: label,
-        //         category: "Basic",
-        //         content: content
-        //     });
-        // });
         
-        // // Block: Dynamically create form elements
-        // formBlocks.forEach(block => {
-        //     editor.BlockManager.add(block.id, {
-        //         ...block
-        //     });
-        // });
+         // // Block: Dynamically create columns
+        columnBlocks.forEach(block => {
+            // Generate inner lines for label
+            const innerLines = block.cols > 1 ? '<div class="inner-lines"></div>'.repeat(block.cols - 1) : '';
+            
+            // Generate label HTML
+            const label = `
+                <div style="text-align:center">
+                <div class="gjs-block-col-${block.cols}" style="display:flex; gap:2px;">
+                    ${innerLines}
+                    <div style="flex:1;"></div>
+                </div>
+                <div style="margin-top:5px;">${block.labelText}</div>
+                </div>
+            `;
 
+            // Generate content HTML
+            const contentColumns = block.contentTexts
+                .map(text => `<div class="column gjs-block-col-2-content" style="flex:1; border:1px solid #ccc; padding:5px; margin-right:2px;">${text}</div>`)
+                .join('');
+            const content = `<div class="row" style="display:flex;">${contentColumns}</div>`;
+
+            // Add block to GrapesJS
+            editor.BlockManager.add(block.id, {
+                label: label,
+                content: content,
+                category: {
+                    id: 'basic',      
+                    label: 'Basic',
+                    open: true,
+                }
+            });
+        });
+        
+        // Block: Dynamically create form elements
+        [...formBlocks, ...extraBlocks].forEach(block => editor.BlockManager.add(block.id!, block));
+
+
+       
         // Add commands and panel buttons
         const devicePanelButtons = devices.map(device => {
             // Add command
@@ -367,13 +485,32 @@ export default function BasicEditor() {
             run: (ed) => ed.setDevice('Mobile'),
         });
 
-        // Auto-open properties when block dropped
-        editor.on('block:drag:stop', component => {
+        // Auto-open properties when block dropped  && Collapse "Basic" category after dropping its block
+        editor.on('block:drag:stop', (component) => {
+            // Collapse all categories
+            const categories = document.querySelectorAll('.gjs-block-category');
+            categories.forEach(cat => cat.classList.add('collapsed'));
+
             if (!component) return;
+
+            // If dropped component is an image, open Assets panel
+            if (component.get('type') === 'image') {
+                editor.select(component);
+                editor.runCommand('open-assets', { target: component });
+            }
+
+            // Select the dropped component
             const target = component.is('wrapper') ? component.components().last() : component;
             editor.select(target);
-            editor.runCommand('open-traits');
+
+            // Open Style Manager panel
+            editor.runCommand('open-sm'); 
+            editor.Panels.getButton('views', 'open-sm')?.set('active', true);
+            editor.Panels.getButton('views', 'open-blocks')?.set('active', false);  // highlight the button in header
+
+           
         });
+
 
        // Custom "Download / Import Template" command
         editor.Commands.add('custom:download', {
@@ -456,11 +593,70 @@ export default function BasicEditor() {
             }
         });
 
-        editor.BlockManager.getCategories().each((cat:any) => {
-           cat.set('open', true); // expand all categories initially
+        editor.on('load', () => {
+            document.querySelectorAll('.gjs-block-category .gjs-title')
+                .forEach(titleEl => {
+                // prevent double icons
+                if (!titleEl.querySelector('.toggle-icon')) {
+                    const icon = document.createElement('span');
+                    icon.className = 'toggle-icon';
+                    icon.innerHTML = '&#9660;'; // ▼ arrow
+                    titleEl.appendChild(icon);
+                }
+            });
+
+            // Collapse all categories by default
+            const categories = document.querySelectorAll('.gjs-block-category');
+            categories.forEach(cat => cat.classList.add('collapsed'));
+
+
+        });
+
+        // Block Toggle expand/collapse on title click 
+        document.addEventListener('click', e => {
+            const target = e.target as HTMLElement | null;
+            if (!target) return;
+
+            // if user clicks title or toggle icon
+            if (target.classList.contains('gjs-title') ||
+                target.classList.contains('toggle-icon')) {
+                const cat = target.closest('.gjs-block-category');
+                cat?.classList.toggle('collapsed');
+            }
+        });
+
+        // When an image component is created, add custom toolbar
+        editor.on('component:add', (component) => {
+            if (component.get('type') === 'image') {
+                component.set({
+                    toolbar: [
+                        {
+                            attributes: { class: 'fa fa-arrows' }, // default move
+                            command: 'tlb-move',
+                        },
+                        {
+                            attributes: { class: 'fa fa-clone' }, // clone
+                            command: 'tlb-clone',
+                        },
+                        {
+                            attributes: { class: 'fa fa-trash' }, // delete
+                            command: 'tlb-delete',
+                        },
+                        {
+                            attributes: { class: 'fa fa-edit' },
+                            command(editor:any, sender:any, opt:any) {
+                                editor.runCommand('open-assets', {
+                                target: component, // open asset manager for this image
+                                });
+                            },
+                        },
+                    ],
+                });
+            }
         });
 
 
+    
         return () => editor.destroy(); // cleanup on unmount
     }, []);   
     return (
