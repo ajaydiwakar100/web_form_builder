@@ -8,6 +8,96 @@ import type { BlockProperties } from 'grapesjs';
 export default function BasicEditor() {
     useEffect(() => {
 
+        // Common traits for all inputs
+        const commonTraits = [
+            { type: 'text', label: 'ID', name: 'id' },
+            { type: 'text', label: 'Name', name: 'name' },
+            { type: 'text', label: 'Class', name: 'class' },
+            { type: 'text', label: 'Style', name: 'style' },
+            { type: 'checkbox', label: 'Required', name: 'required' },
+            { type: 'checkbox', label: 'Readonly', name: 'readonly' },
+            { type: 'checkbox', label: 'Disabled', name: 'disabled' },
+            { type: 'checkbox', label: 'Autofocus', name: 'autofocus' },
+        ];
+
+        // Specialized traits
+        const textInputTraits = [
+            ...commonTraits,
+            { type: 'text', label: 'Placeholder', name: 'placeholder' },
+            { type: 'number', label: 'Max Length', name: 'maxlength' },
+            { type: 'number', label: 'Min Length', name: 'minlength' },
+            { type: 'text', label: 'Pattern (Regex)', name: 'pattern' },
+            { type: 'text', label: 'Default Value', name: 'value' },
+        ];
+
+        const textareaTraits = [
+            ...commonTraits,
+            { type: 'text', label: 'Placeholder', name: 'placeholder' },
+            { type: 'number', label: 'Rows', name: 'rows' },
+        ];
+
+        const checkboxRadioTraits = [
+            ...commonTraits,
+            { type: 'text', label: 'Value', name: 'value' },
+            { type: 'checkbox', label: 'Checked', name: 'checked' },
+        ];
+
+        const buttonTraits = [
+            ...commonTraits,
+            { type: 'text', label: 'Text', name: 'btn-text', changeProp: true },
+            { type: 'select', label: 'Type', name: 'type', options: [
+                { id: 'button', name: 'Button' },
+                { id: 'submit', name: 'Submit' },
+                { id: 'reset', name: 'Reset' },
+            ] },
+            { type: 'text', label: 'Icon (FontAwesome class)', name: 'icon-class', changeProp: true },
+        ];
+
+        const linkTraits = [
+            ...commonTraits,
+            { type: 'text', label: 'Href', name: 'href', placeholder: 'https://example.com' },
+            { type: 'text', label: 'Text', name: 'text', placeholder: 'Click here' },
+            { type: 'checkbox', label: 'Open in new tab', name: 'target', valueTrue: '_blank', valueFalse: '_self' },
+        ];
+
+        const quoteTraits = [
+            ...commonTraits,
+            { type: 'text', label: 'Text', name: 'text', placeholder: 'Your quote...' },
+            { type: 'text', label: 'Author', name: 'author', placeholder: 'Author name' },
+        ];
+
+        const textSectionTraits = [
+            ...commonTraits,
+            { type: 'text', label: 'Text', name: 'text', placeholder: 'Enter text...' },
+        ];
+
+        const countdownTraits = [
+            { type: 'text', label: 'Target Date/Time', name: 'target', placeholder: 'YYYY-MM-DD HH:MM:SS' },
+            {
+                type: 'select',
+                label: 'Format',
+                name: 'format',
+                options: [
+                { id: 'hh:mm:ss', name: 'HH:MM:SS' },
+                { id: 'dd:hh:mm:ss', name: 'DD:HH:MM:SS' },
+                { id: 'mm:ss', name: 'MM:SS' },
+                ],
+            },
+            { type: 'text', label: 'Expired Text', name: 'expiredText', placeholder: 'Time’s up!' },
+            { type: 'checkbox', label: 'Autostart', name: 'autostart' },
+            { type: 'checkbox', label: 'Show Labels', name: 'showLabels' },
+            { type: 'text', label: 'Class', name: 'class' },
+            { type: 'text', label: 'Style', name: 'style' },
+        ];
+
+        const tooltipTraits = [
+            { type: 'text', label: 'Tooltip Text', name: 'title', placeholder: 'Enter tooltip text' },
+            { type: 'text', label: 'Class', name: 'class', placeholder: 'custom-tooltip' },
+            { type: 'text', label: 'ID', name: 'id', placeholder: 'tooltip-id' },
+            { type: 'text', label: 'Style', name: 'style', placeholder: 'inline CSS styles' },
+        ];
+
+
         // Blocks - Columns BLocks
         const columnBlocks = [
             { id: '1-column', cols: 1, labelText: '1 Column', contentTexts: ['1 Column'] },
@@ -17,68 +107,6 @@ export default function BasicEditor() {
 
         // Blocks - Form elements
         const formBlocks: BlockProperties[] = [
-            // Textbox Input
-            {
-                id: 'form-textbox',
-                label: '<div style="text-align:center;"><div class="gjs-block-textbox">T</div> <div style="font-size: 13px;">Text</div></div>',
-                category: 'Form',
-                content: {
-                tagName: 'input',
-                attributes: { type: 'text', placeholder: 'Insert your text here', class: 'gjs-block-textbox-content' },
-                traits: [
-                    'name',
-                    'placeholder',
-                    { type: 'checkbox', label: 'Required', name: 'required' }
-                ]
-                } as any
-            },
-
-            // Image
-            {
-                id: 'image-upload',
-                label: `
-                    <div style="text-align:center;">
-                        <i class="fa fa-image gjs-block-inage"></i><br/>
-                        <span style="font-size: 13px;">Image</span>
-                    </div>
-                `,
-                category: 'Form',
-                content: {
-                type: 'image',
-                attributes: { src: 'https://via.placeholder.com/300x150?text=Image', alt: 'Uploaded image' }
-                } as any
-            },
-
-            // Video
-            {
-                id: 'video-block',
-                category: 'Form',
-                label: `
-                    <div style="text-align:center;">
-                        <i class="fa fa-play-circle gjs-block-video"></i><br/>
-                        <span style="font-size:13px;">Video</span>
-                    </div>
-                `,
-                content: {
-                type: 'video',
-                src: 'https://www.w3schools.com/html/mov_bbb.mp4',
-                attributes: { controls: true }
-                } as any
-            },
-
-            // Map
-            {
-                id: 'map-block',
-                label: `
-                    <div style="text-align:center;">
-                        <i class="fa fa-map-marker gjs-block-map"></i><br/>
-                        <span style="font-size:13px;">Map</span>
-                    </div>
-                `,
-                category: 'Form',
-                content: { type: 'map' } as any
-            },
-
             // Form
             {
                 id: 'form',
@@ -135,11 +163,7 @@ export default function BasicEditor() {
                 content: {
                 tagName: 'input',
                 attributes: { type: 'text', name: 'input_name', placeholder: 'Enter value', required: true, class: 'input-box' },
-                traits: [
-                    'name',
-                    'placeholder',
-                    { type: 'checkbox', label: 'Required', name: 'required' }
-                ]
+                traits: textInputTraits
                 } as any
             },
 
@@ -156,7 +180,7 @@ export default function BasicEditor() {
                 content: {
                 tagName: 'input',
                 attributes: { type: 'checkbox', name: 'checkbox_name', value: '1' },
-                traits: ['name', 'value', { type: 'checkbox', label: 'Checked', name: 'checked' }]
+                traits: checkboxRadioTraits
                 } as any
             },
 
@@ -173,7 +197,7 @@ export default function BasicEditor() {
                 content: {
                 tagName: 'input',
                 attributes: { type: 'radio', name: 'radio_group', value: 'option1' },
-                traits: ['name', 'value', { type: 'checkbox', label: 'Checked', name: 'checked' }]
+                traits: checkboxRadioTraits
                 } as any
             },
 
@@ -193,7 +217,7 @@ export default function BasicEditor() {
                     { tagName: 'option', content: 'Option 1', attributes: { value: 'option1' } },
                     { tagName: 'option', content: 'Option 2', attributes: { value: 'option2' } }
                 ],
-                traits: ['name']
+                traits: [...commonTraits, { type: 'text', label: 'Options (comma-separated)', name: 'options' }],
                 } as any
             },
 
@@ -211,66 +235,10 @@ export default function BasicEditor() {
                 tagName: 'button',
                 content: '<i class="fa fa-check"></i> Click Me',
                 attributes: { type: 'submit', class: 'btn' },
-                traits: [
-                    { type: 'text', label: 'Text', name: 'btn-text', changeProp: true },
-                    { type: 'select', label: 'Type', name: 'type', options: [
-                    { id: 'button', name: 'Button' },
-                    { id: 'submit', name: 'Submit' },
-                    { id: 'reset', name: 'Reset' }
-                    ] },
-                    { type: 'text', label: 'Icon (FontAwesome class)', name: 'icon-class', changeProp: true }
-                ]
+                traits: buttonTraits
                 } as any
             },
         
-            // Link block
-            {
-                id: 'form-link',
-                category: 'Form',
-                label: `
-                    <div style="text-align:center;">
-                        <i class="fa fa-link gjs-block-map"></i><br/>
-                        <span style="font-size:13px;">Link</span>
-                    </div>`,
-                content: {
-                tagName: 'a',
-                attributes: { href: '#', target: '_blank', class: 'gjs-block-link' },
-                components: 'Click here',
-                traits: [
-                    { type: 'text', label: 'Href', name: 'href', placeholder: 'https://example.com' },
-                    { type: 'text', label: 'Text', name: 'text', placeholder: 'Click here' },
-                    { type: 'checkbox', label: 'Open in new tab', name: 'target', valueTrue: '_blank', valueFalse: '_self' }
-                ]
-                } as any
-            },
-
-            // Quote
-            {
-                id: 'form-quote',
-                category: 'Form',
-                label: `<div style="text-align:center;"><i class="fa fa-quote-left gjs-block-map"></i><br/><span style="font-size:13px;">Quote</span></div>`,
-                content: {
-                tagName: 'blockquote',
-                components: 'Your quote here...',
-                traits: [
-                    { type: 'text', label: 'Text', name: 'text', placeholder: 'Your quote...' },
-                    { type: 'text', label: 'Author', name: 'author', placeholder: 'Author name' }
-                ]
-                } as any
-            },
-
-            // Text Section
-            {
-                id: 'form-text-section',
-                category: 'Form',
-                label: `<div style="text-align:center;"><i class="fa fa-align-left gjs-block-map"></i><br/><span style="font-size:13px;">Text Section</span></div>`,
-                content: {
-                tagName: 'div',
-                components: 'Your text here...',
-                traits: [{ type: 'text', label: 'Text', name: 'text', placeholder: 'Enter text...' }]
-                } as any
-            },
-
             // Textarea
             {
                 id: 'form-textarea',
@@ -279,11 +247,7 @@ export default function BasicEditor() {
                 content: {
                 tagName: 'textarea',
                 attributes: { placeholder: 'Enter your message', rows: 4, class: 'gjs-block-textarea' },
-                traits: [
-                    { type: 'text', label: 'Name', name: 'name', placeholder: 'Field name' },
-                    { type: 'text', label: 'Placeholder', name: 'placeholder', placeholder: 'Enter your message' },
-                    { type: 'checkbox', label: 'Required', name: 'required' }
-                ]
+                traits:textareaTraits
                 } as any
             }
         ];
@@ -297,10 +261,7 @@ export default function BasicEditor() {
                 content: {
                 tagName: 'input',
                 attributes: { type: 'text', placeholder: 'Type something...', class: 'gjs-block-typed' },
-                traits: [
-                    { type: 'text', label: 'Name', name: 'name', placeholder: 'Field name' },
-                    { type: 'text', label: 'Placeholder', name: 'placeholder', placeholder: 'Type here...' }
-                ]
+                traits: textInputTraits
                 } as any
             },
 
@@ -310,10 +271,10 @@ export default function BasicEditor() {
                 category: 'Extra',
                 label: `<div style="text-align:center;"><i class="fa fa-info-circle gjs-block-map"></i><br/><span style="font-size:13px;">Tooltip</span></div>`,
                 content: {
-                tagName: 'span',
-                components: 'Hover me',
-                attributes: { title: 'Tooltip text', class: 'gjs-block-tooltip' },
-                traits: [{ type: 'text', label: 'Tooltip', name: 'title', placeholder: 'Tooltip text' }]
+                    tagName: 'span',
+                    components: 'Hover me',
+                    attributes: { title: 'Tooltip text', class: 'gjs-block-tooltip' },
+                    traits: tooltipTraits
                 } as any
             },
 
@@ -340,10 +301,10 @@ export default function BasicEditor() {
                 category: 'Extra',
                 label: `<div style="text-align:center;"><i class="fa fa-clock-o gjs-block-map"></i><br/><span style="font-size:13px;">Countdown</span></div>`,
                 content: {
-                tagName: 'div',
-                components: '00:00:00',
-                attributes: { class: 'gjs-block-countdown' },
-                traits: [{ type: 'text', label: 'Countdown Target', name: 'target', placeholder: 'YYYY-MM-DD HH:MM:SS' }]
+                    tagName: 'div',
+                    components: '00:00:00',
+                    attributes: { class: 'gjs-block-countdown' },
+                    traits: countdownTraits
                 } as any
             },
             // Plain Header
@@ -371,6 +332,106 @@ export default function BasicEditor() {
             },
         ];
 
+        const basicBlocks: BlockProperties[] = [
+            // Textbox Input
+            {
+                id: 'form-textbox',
+                label: '<div style="text-align:center;"><div class="gjs-block-textbox">T</div> <div style="font-size: 13px;">Text</div></div>',
+                category: 'Basic',
+                content: {
+                tagName: 'input',
+                attributes: { type: 'text', placeholder: 'Insert your text here', class: 'gjs-block-textbox-content' },
+                traits: textInputTraits
+                } as any
+            },
+
+            // Image
+            {
+                id: 'image-upload',
+                label: `
+                    <div style="text-align:center;">
+                        <i class="fa fa-image gjs-block-inage"></i><br/>
+                        <span style="font-size: 13px;">Image</span>
+                    </div>
+                `,
+                category: 'Basic',
+                content: {
+                type: 'image',
+                attributes: { src: 'https://via.placeholder.com/300x150?text=Image', alt: 'Uploaded image' }
+                } as any
+            },
+
+            // Video
+            {
+                id: 'video-block',
+                category: 'Basic',
+                label: `
+                    <div style="text-align:center;">
+                        <i class="fa fa-play-circle gjs-block-video"></i><br/>
+                        <span style="font-size:13px;">Video</span>
+                    </div>
+                `,
+                content: {
+                type: 'video',
+                src: 'https://www.w3schools.com/html/mov_bbb.mp4',
+                attributes: { controls: true }
+                } as any
+            },
+
+            // Map
+            {
+                id: 'map-block',
+                label: `
+                    <div style="text-align:center;">
+                        <i class="fa fa-map-marker gjs-block-map"></i><br/>
+                        <span style="font-size:13px;">Map</span>
+                    </div>
+                `,
+                category: 'Basic',
+                content: { type: 'map' } as any
+            },
+
+            // Link block
+            {
+                id: 'form-link',
+                category: 'Basic',
+                label: `
+                    <div style="text-align:center;">
+                        <i class="fa fa-link gjs-block-map"></i><br/>
+                        <span style="font-size:13px;">Link</span>
+                    </div>`,
+                content: {
+                tagName: 'a',
+                attributes: { href: '#', target: '_blank', class: 'gjs-block-link' },
+                components: 'Click here',
+                traits: linkTraits
+                } as any
+            },
+
+            // Quote
+            {
+                id: 'form-quote',
+                category: 'Basic',
+                label: `<div style="text-align:center;"><i class="fa fa-quote-left gjs-block-map"></i><br/><span style="font-size:13px;">Quote</span></div>`,
+                content: {
+                tagName: 'blockquote',
+                components: 'Your quote here...',
+                traits: quoteTraits
+                } as any
+            },
+
+            // Text Section
+            {
+                id: 'form-text-section',
+                category: 'Basic',
+                label: `<div style="text-align:center;"><i class="fa fa-align-left gjs-block-map"></i><br/><span style="font-size:13px;">Text Section</span></div>`,
+                content: {
+                tagName: 'div',
+                components: 'Your text here...',
+                traits: textSectionTraits
+                } as any
+            },
+        ]
     
         // Panel -Buttom
         const buttons = [
@@ -430,15 +491,15 @@ export default function BasicEditor() {
                 label: label,
                 content: content,
                 category: {
-                    id: 'basic',      
-                    label: 'Basic',
+                    id: 'layout',      
+                    label: 'Layout',
                     open: true,
                 }
             });
         });
         
         // Block: Dynamically create form elements
-        [...formBlocks, ...extraBlocks].forEach(block => editor.BlockManager.add(block.id!, block));
+        [...basicBlocks, ...formBlocks, ...extraBlocks].forEach(block => editor.BlockManager.add(block.id!, block));
 
 
        
@@ -507,10 +568,7 @@ export default function BasicEditor() {
             editor.runCommand('open-sm'); 
             editor.Panels.getButton('views', 'open-sm')?.set('active', true);
             editor.Panels.getButton('views', 'open-blocks')?.set('active', false);  // highlight the button in header
-
-           
         });
-
 
        // Custom "Download / Import Template" command
         editor.Commands.add('custom:download', {
@@ -609,6 +667,39 @@ export default function BasicEditor() {
             const categories = document.querySelectorAll('.gjs-block-category');
             categories.forEach(cat => cat.classList.add('collapsed'));
 
+            const sm = editor.StyleManager;
+
+            // Add new "Settings" sector inside Style Manager
+            sm.addSector('settings', {
+                name: 'Settings',
+                open: true,
+                buildProps: [], // we won't use normal style props
+            });
+
+            // Render traits dynamically inside Settings sector
+            editor.on('component:selected', (cmp: any) => {
+                const sm = editor.StyleManager;
+                const settingsSector = sm.getSector('settings') as any;
+                if (!settingsSector?.view?.el) return;
+
+                // ✅ Sector DOM element
+                const sectorEl: HTMLElement = settingsSector.view.el;
+
+                // ✅ Properties container inside this sector
+                const propsEl = sectorEl.querySelector('.gjs-sm-properties') as HTMLElement | null;
+                if (!propsEl) return;
+
+                // Clear old traits
+                propsEl.innerHTML = '';
+
+                // ✅ Render traits for the selected component
+                const tm = editor.TraitManager;
+                const traitsEl = tm.render();
+
+                if (traitsEl instanceof HTMLElement) {
+                    propsEl.appendChild(traitsEl);
+                }
+            });
 
         });
 
@@ -646,7 +737,7 @@ export default function BasicEditor() {
                             attributes: { class: 'fa fa-edit' },
                             command(editor:any, sender:any, opt:any) {
                                 editor.runCommand('open-assets', {
-                                target: component, // open asset manager for this image
+                                    target: component, // open asset manager for this image
                                 });
                             },
                         },
@@ -654,7 +745,7 @@ export default function BasicEditor() {
                 });
             }
         });
-
+        
 
     
         return () => editor.destroy(); // cleanup on unmount
