@@ -652,8 +652,7 @@ export default function BasicEditor() {
         });
 
         editor.on('load', () => {
-            document.querySelectorAll('.gjs-block-category .gjs-title')
-                .forEach(titleEl => {
+            document.querySelectorAll('.gjs-block-category .gjs-title').forEach(titleEl => {
                 // prevent double icons
                 if (!titleEl.querySelector('.toggle-icon')) {
                     const icon = document.createElement('span');
@@ -666,41 +665,6 @@ export default function BasicEditor() {
             // Collapse all categories by default
             const categories = document.querySelectorAll('.gjs-block-category');
             categories.forEach(cat => cat.classList.add('collapsed'));
-
-            const sm = editor.StyleManager;
-
-            // Add new "Settings" sector inside Style Manager
-            sm.addSector('settings', {
-                name: 'Settings',
-                open: true,
-                buildProps: [], // we won't use normal style props
-            });
-
-            // Render traits dynamically inside Settings sector
-            editor.on('component:selected', (cmp: any) => {
-                const sm = editor.StyleManager;
-                const settingsSector = sm.getSector('settings') as any;
-                if (!settingsSector?.view?.el) return;
-
-                // ✅ Sector DOM element
-                const sectorEl: HTMLElement = settingsSector.view.el;
-
-                // ✅ Properties container inside this sector
-                const propsEl = sectorEl.querySelector('.gjs-sm-properties') as HTMLElement | null;
-                if (!propsEl) return;
-
-                // Clear old traits
-                propsEl.innerHTML = '';
-
-                // ✅ Render traits for the selected component
-                const tm = editor.TraitManager;
-                const traitsEl = tm.render();
-
-                if (traitsEl instanceof HTMLElement) {
-                    propsEl.appendChild(traitsEl);
-                }
-            });
-
         });
 
         // Block Toggle expand/collapse on title click 
@@ -746,8 +710,57 @@ export default function BasicEditor() {
             }
         });
         
+        const sm = editor.StyleManager;
 
-    
+        // 1️⃣ Add a Settings sector
+        sm.addSector("settings", {
+            name: "Settings",
+            open: true,
+            buildProps: [], // empty, traits will go here
+        });
+        // 2️⃣ Wait for Style Manager to render before accessing sector DOM
+        editor.on('styleManager:render', () => {
+            
+            // 3️⃣ On component select, render traits
+            editor.on("component:selected", (cmp) => {
+                if (!cmp) return;
+
+                const smEl = editor.getContainer()!.querySelector(".gjs-sm-sectors");
+                if (!smEl) return;
+
+                const settingsEl = smEl.querySelector('.gjs-sm-sector[data-id="settings"]') as HTMLElement;
+                if (!settingsEl) return;
+
+                const propsEl = settingsEl.querySelector(".gjs-sm-properties") as HTMLElement;
+                if (!propsEl) return;
+
+                // Clear old traits
+                propsEl.innerHTML = "";
+
+                // Render each trait manually
+                cmp.get("traits").forEach((trait: any) => {
+                const wrapper = document.createElement("div");
+                wrapper.className = "gjs-trt-trait";
+
+                const label = document.createElement("label");
+                label.textContent = trait.get("label") || trait.get("name");
+                label.className = "gjs-trt-label";
+                wrapper.appendChild(label);
+
+                const input = document.createElement("input");
+                input.value = trait.get("value") || "";
+                input.className = "gjs-trt-field";
+                input.addEventListener("input", (e) => {
+                    trait.set("value", (e.target as HTMLInputElement).value);
+                });
+                wrapper.appendChild(input);
+
+                propsEl.appendChild(wrapper);
+                });
+            });
+
+        });
+
         return () => editor.destroy(); // cleanup on unmount
     }, []);   
     return (
