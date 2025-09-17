@@ -3,6 +3,7 @@ import 'grapesjs/dist/css/grapes.min.css';
 import grapesjs, { Category } from 'grapesjs';
 import { useEffect } from 'react';
 import type { BlockProperties } from 'grapesjs';
+import { startCountdown } from '../utils/countdown';
 
 
 export default function BasicEditor() {
@@ -296,17 +297,20 @@ export default function BasicEditor() {
             },
 
             // Countdown
-            {
+           {
                 id: 'extra-countdown',
+                label: 'Countdown',
                 category: 'Extra',
-                label: `<div style="text-align:center;"><i class="fa fa-clock-o gjs-block-map"></i><br/><span style="font-size:13px;">Countdown</span></div>`,
-                content: {
-                    tagName: 'div',
-                    components: '00:00:00',
-                    attributes: { class: 'gjs-block-countdown' },
-                    traits: countdownTraits
-                } as any
+                content: `
+                <div class="countdown">
+                    <span data-js="day">00</span>d :
+                    <span data-js="hour">00</span>h :
+                    <span data-js="minute">00</span>m :
+                    <span data-js="second">00</span>s
+                </div>
+                `,
             },
+
             // Plain Header
             {
                 id: 'plain-header',
@@ -711,22 +715,20 @@ export default function BasicEditor() {
                     ],
                 });
             }
-        });
-        
-        editor.on('component:selected', (cmp) => {
-            if (!cmp) return;
 
-            // Only for <input> components
-            if (cmp.is('input')) {
-                // Clear old traits
-                cmp.set('traits', []);
-
-                // Add custom traits dynamically
-                cmp.addTrait({ type: 'text', name: 'placeholder', label: 'Placeholder' });
-                cmp.addTrait({ type: 'checkbox', name: 'required', label: 'Required' });
+            if (component.getAttributes().class === 'countdown') {
+               component.once('render', () => {
+                    const el = component.getEl() as HTMLElement;
+                    if (el) {
+                        startCountdown(el, '2025-10-01 12:00:00', 'Event Started!');
+                    }else{
+                        alert("DD");
+                    }
+                });
+                
             }
         });
-
+        
         return () => editor.destroy(); // cleanup on unmount
     }, []);   
     return (
@@ -734,4 +736,6 @@ export default function BasicEditor() {
             <div id="gjs"></div>
         </div>
     );
+
+    
 }
