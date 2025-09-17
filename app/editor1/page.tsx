@@ -450,21 +450,30 @@ export default function BasicEditor() {
             { id: 'device-mobile', title: 'Mobile', icon: 'fa fa-mobile', width: '480px' },
         ];
 
+        // Style Manager
+        const styleManagerSector = [
+            { id: 'settings', name: 'Settings', open: true, buildProps: []},
+            { name: 'General',open: false, buildProps: ['float', 'display', 'position', 'top', 'right', 'left', 'bottom']},
+            { name: 'Flex',   open: false, buildProps: ['flex-direction','flex-wrap','justify-content','align-items','align-content','order','flex-basis','flex-grow','flex-shrink','align-self']},
+            { name: 'Dimension', open: false, buildProps: ['width', 'height', 'max-width', 'min-height', 'margin', 'padding']},
+            { name: 'Typography',open: false, buildProps: ['font-family', 'font-size','font-weight','letter-spacing','color','line-height','text-align','text-shadow']},
+            { name: 'Decorations', open: false, buildProps: [ 'background-color', 'border-radius', 'border','box-shadow','background']},
+            { name: 'Extra', open: false, buildProps: ['opacity', 'transition', 'perspective', 'transform']},
+        ];
+
         // Initialize GrapesJS editor
         const editor = grapesjs.init({
             container: '#gjs',
             fromElement: false,
             canvas: { styles: ['/globals.css']},
             showDevices: false,
+            styleManager: { sectors: styleManagerSector}
         });
 
         // Top right panel 
-        buttons.forEach(btn => {
-            editor.Panels.addButton('options', btn);
-        });
-
+        buttons.forEach(btn => {editor.Panels.addButton('options', btn)});
         
-         // // Block: Dynamically create columns
+        // Block: Dynamically create columns
         columnBlocks.forEach(block => {
             // Generate inner lines for label
             const innerLines = block.cols > 1 ? '<div class="inner-lines"></div>'.repeat(block.cols - 1) : '';
@@ -501,8 +510,6 @@ export default function BasicEditor() {
         // Block: Dynamically create form elements
         [...basicBlocks, ...formBlocks, ...extraBlocks].forEach(block => editor.BlockManager.add(block.id!, block));
 
-
-       
         // Add commands and panel buttons
         const devicePanelButtons = devices.map(device => {
             // Add command
@@ -536,14 +543,10 @@ export default function BasicEditor() {
         });
 
         // Commands for switching devices
-        editor.Commands.add('set-device-desktop', {
-            run: (ed) => ed.setDevice('Desktop'),
-        });
-        editor.Commands.add('set-device-tablet', {
-            run: (ed) => ed.setDevice('Tablet'),
-        });
-        editor.Commands.add('set-device-mobile', {
-            run: (ed) => ed.setDevice('Mobile'),
+        ['Desktop', 'Tablet', 'Mobile'].forEach(device => {
+            editor.Commands.add(`set-device-${device.toLowerCase()}`, {
+                run: (ed) => ed.setDevice(device),
+            });
         });
 
         // Auto-open properties when block dropped  && Collapse "Basic" category after dropping its block
@@ -710,55 +713,18 @@ export default function BasicEditor() {
             }
         });
         
-        const sm = editor.StyleManager;
+        editor.on('component:selected', (cmp) => {
+            if (!cmp) return;
 
-        // 1️⃣ Add a Settings sector
-        sm.addSector("settings", {
-            name: "Settings",
-            open: true,
-            buildProps: [], // empty, traits will go here
-        });
-        // 2️⃣ Wait for Style Manager to render before accessing sector DOM
-        editor.on('styleManager:render', () => {
-            
-            // 3️⃣ On component select, render traits
-            editor.on("component:selected", (cmp) => {
-                if (!cmp) return;
-
-                const smEl = editor.getContainer()!.querySelector(".gjs-sm-sectors");
-                if (!smEl) return;
-
-                const settingsEl = smEl.querySelector('.gjs-sm-sector[data-id="settings"]') as HTMLElement;
-                if (!settingsEl) return;
-
-                const propsEl = settingsEl.querySelector(".gjs-sm-properties") as HTMLElement;
-                if (!propsEl) return;
-
+            // Only for <input> components
+            if (cmp.is('input')) {
                 // Clear old traits
-                propsEl.innerHTML = "";
+                cmp.set('traits', []);
 
-                // Render each trait manually
-                cmp.get("traits").forEach((trait: any) => {
-                const wrapper = document.createElement("div");
-                wrapper.className = "gjs-trt-trait";
-
-                const label = document.createElement("label");
-                label.textContent = trait.get("label") || trait.get("name");
-                label.className = "gjs-trt-label";
-                wrapper.appendChild(label);
-
-                const input = document.createElement("input");
-                input.value = trait.get("value") || "";
-                input.className = "gjs-trt-field";
-                input.addEventListener("input", (e) => {
-                    trait.set("value", (e.target as HTMLInputElement).value);
-                });
-                wrapper.appendChild(input);
-
-                propsEl.appendChild(wrapper);
-                });
-            });
-
+                // Add custom traits dynamically
+                cmp.addTrait({ type: 'text', name: 'placeholder', label: 'Placeholder' });
+                cmp.addTrait({ type: 'checkbox', name: 'required', label: 'Required' });
+            }
         });
 
         return () => editor.destroy(); // cleanup on unmount
