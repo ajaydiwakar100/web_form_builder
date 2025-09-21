@@ -3,7 +3,7 @@ import 'grapesjs/dist/css/grapes.min.css';
 import grapesjs, { Category } from 'grapesjs';
 import { useEffect } from 'react';
 import type { BlockProperties } from 'grapesjs';
-import { startCountdown } from '../utils/countdown';
+import { registerCountdown } from '../utils/countdown';
 
 
 export default function BasicEditor() {
@@ -301,14 +301,17 @@ export default function BasicEditor() {
                 id: 'extra-countdown',
                 label: 'Countdown',
                 category: 'Extra',
-                content: `
-                <div class="countdown">
-                    <span data-js="day">00</span>d :
-                    <span data-js="hour">00</span>h :
-                    <span data-js="minute">00</span>m :
-                    <span data-js="second">00</span>s
-                </div>
-                `,
+                content: {
+                    type: 'countdown', // 🔑 important!
+                    content: `
+                    <div class="countdown">
+                        <span data-js="day">00</span>d :
+                        <span data-js="hour">00</span>h :
+                        <span data-js="minute">00</span>m :
+                        <span data-js="second">00</span>s
+                    </div>
+                    `,
+                },
             },
 
             // Plain Header
@@ -687,6 +690,9 @@ export default function BasicEditor() {
             }
         });
 
+        // Register countdown ONCE when editor loads
+        registerCountdown(editor, countdownTraits);
+        
         // When an image component is created, add custom toolbar
         editor.on('component:add', (component) => {
             if (component.get('type') === 'image') {
@@ -715,19 +721,10 @@ export default function BasicEditor() {
                     ],
                 });
             }
-
-            if (component.getAttributes().class === 'countdown') {
-               component.once('render', () => {
-                    const el = component.getEl() as HTMLElement;
-                    if (el) {
-                        startCountdown(el, '2025-10-01 12:00:00', 'Event Started!');
-                    }else{
-                        alert("DD");
-                    }
-                });
-                
-            }
         });
+        
+        
+
         
         return () => editor.destroy(); // cleanup on unmount
     }, []);   
