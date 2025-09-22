@@ -1,11 +1,30 @@
-export function registerCountdown(editor: any, countdownTraits: any[]) {
+export function registerCountdown(editor: any, countdownTraits1: any[]) {
   const defaultType = editor.DomComponents.getType('default');
   const defaultModel = defaultType.model;
+  const countdownTraits = [
+      { type: 'text', label: 'Target Date/Time', name: 'target', placeholder: 'YYYY-MM-DD HH:MM:SS' },
+      {
+          type: 'select',
+          label: 'Format',
+          name: 'format',
+          options: [
+          { id: 'hh:mm:ss', name: 'HH:MM:SS' },
+          { id: 'dd:hh:mm:ss', name: 'DD:HH:MM:SS' },
+          { id: 'mm:ss', name: 'MM:SS' },
+          ],
+      },
+      { type: 'text', label: 'Expired Text', name: 'expiredText', placeholder: 'Time’s up!' },
+      { type: 'checkbox', label: 'Autostart', name: 'autostart' },
+      { type: 'checkbox', label: 'Show Labels', name: 'showLabels' },
+      { type: 'text', label: 'Class', name: 'class' },
+      { type: 'text', label: 'Style', name: 'style' },
+];
 
   editor.DomComponents.addType('countdown', {
     model: defaultModel.extend(
       {
         init() {
+          console.log("d");
           this.on(
             'change:target change:format change:expiredText change:autostart change:showLabels',
             () => {

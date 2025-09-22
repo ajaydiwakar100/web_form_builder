@@ -3,7 +3,6 @@ import 'grapesjs/dist/css/grapes.min.css';
 import grapesjs, { Category } from 'grapesjs';
 import { useEffect } from 'react';
 import type { BlockProperties } from 'grapesjs';
-import { registerCountdown } from '../utils/countdown';
 
 
 export default function BasicEditor() {
@@ -73,24 +72,10 @@ export default function BasicEditor() {
         ];
 
         const countdownTraits = [
-            { type: 'text', label: 'Target Date/Time', name: 'target', placeholder: 'YYYY-MM-DD HH:MM:SS' },
-            {
-                type: 'select',
-                label: 'Format',
-                name: 'format',
-                options: [
-                { id: 'hh:mm:ss', name: 'HH:MM:SS' },
-                { id: 'dd:hh:mm:ss', name: 'DD:HH:MM:SS' },
-                { id: 'mm:ss', name: 'MM:SS' },
-                ],
-            },
-            { type: 'text', label: 'Expired Text', name: 'expiredText', placeholder: 'Time’s up!' },
-            { type: 'checkbox', label: 'Autostart', name: 'autostart' },
-            { type: 'checkbox', label: 'Show Labels', name: 'showLabels' },
-            { type: 'text', label: 'Class', name: 'class' },
-            { type: 'text', label: 'Style', name: 'style' },
+            { type: 'date', label: 'Start', name: 'startDate', changeProp: true },
+            { type: 'text', label: 'End Text', name: 'endText', placeholder: 'Time’s up!', changeProp: true },
         ];
-
+        
         const tooltipTraits = [
             { type: 'text', label: 'Tooltip Text', name: 'title', placeholder: 'Enter tooltip text' },
             { type: 'text', label: 'Class', name: 'class', placeholder: 'custom-tooltip' },
@@ -98,6 +83,18 @@ export default function BasicEditor() {
             { type: 'text', label: 'Style', name: 'style', placeholder: 'inline CSS styles' },
         ];
 
+        const tabTraits = [
+            { type: 'select', label: 'Direction', name: 'direction', options: [
+                { id: 'horizontal', name: 'Horizontal' },
+                { id: 'vertical', name: 'Vertical' },
+            ], changeProp: true, default: 'horizontal' },
+            { type: 'text', label: 'Tab 1 Label', name: 'tab1Label', changeProp: true, default: 'Tab 1' },
+            { type: 'textarea', label: 'Tab 1 Content', name: 'tab1Content', changeProp: true, default: 'Editable content for Tab 1' },
+            { type: 'text', label: 'Tab 2 Label', name: 'tab2Label', changeProp: true, default: 'Tab 2' },
+            { type: 'textarea', label: 'Tab 2 Content', name: 'tab2Content', changeProp: true, default: 'Editable content for Tab 2' },
+            { type: 'text', label: 'Tab 3 Label', name: 'tab3Label', changeProp: true, default: 'Tab 3' },
+            { type: 'textarea', label: 'Tab 3 Content', name: 'tab3Content', changeProp: true, default: 'Editable content for Tab 3' },
+        ];
 
         // Blocks - Columns BLocks
         const columnBlocks = [
@@ -106,6 +103,7 @@ export default function BasicEditor() {
             { id: '3-column', cols: 3, labelText: '3 Columns', contentTexts: ['Col 1', 'Col 2', 'Col 3'] },
         ];
 
+        
         // Blocks - Form elements
         const formBlocks: BlockProperties[] = [
             // Form
@@ -279,41 +277,6 @@ export default function BasicEditor() {
                 } as any
             },
 
-            // Tabs
-            {
-                id: 'extra-tabs',
-                category: 'Extra',
-                label: `<div style="text-align:center;"><i class="fa fa-folder gjs-block-map"></i><br/><span style="font-size:13px;">Tabs</span></div>`,
-                content: {
-                tagName: 'div',
-                components: `
-                    <ul class="tabs">
-                    <li class="tab active">Tab 1</li>
-                    <li class="tab">Tab 2</li>
-                    </ul>
-                    <div class="tab-content">Tab content here...</div>
-                `
-                } as any
-            },
-
-            // Countdown
-           {
-                id: 'extra-countdown',
-                label: 'Countdown',
-                category: 'Extra',
-                content: {
-                    type: 'countdown', // 🔑 important!
-                    content: `
-                    <div class="countdown">
-                        <span data-js="day">00</span>d :
-                        <span data-js="hour">00</span>h :
-                        <span data-js="minute">00</span>m :
-                        <span data-js="second">00</span>s
-                    </div>
-                    `,
-                },
-            },
-
             // Plain Header
             {
                 id: 'plain-header',
@@ -480,7 +443,7 @@ export default function BasicEditor() {
         // Top right panel 
         buttons.forEach(btn => {editor.Panels.addButton('options', btn)});
         
-        // Block: Dynamically create columns
+        //Block: Dynamically create columns
         columnBlocks.forEach(block => {
             // Generate inner lines for label
             const innerLines = block.cols > 1 ? '<div class="inner-lines"></div>'.repeat(block.cols - 1) : '';
@@ -515,7 +478,7 @@ export default function BasicEditor() {
         });
         
         // Block: Dynamically create form elements
-        [...basicBlocks, ...formBlocks, ...extraBlocks].forEach(block => editor.BlockManager.add(block.id!, block));
+        [ ...basicBlocks, ...formBlocks, ...extraBlocks].forEach(block => editor.BlockManager.add(block.id!, block));
 
         // Add commands and panel buttons
         const devicePanelButtons = devices.map(device => {
@@ -570,14 +533,21 @@ export default function BasicEditor() {
                 editor.runCommand('open-assets', { target: component });
             }
 
-            // Select the dropped component
+
+            // if (component?.get('type') === 'countdown') {
+            //     editor.select(component);
+            //     editor.TraitManager.render();
+            //     editor.Panels.getButton('views', 'open-sm')?.set('active', true);
+            // }
+
+            // // Select the dropped component
             const target = component.is('wrapper') ? component.components().last() : component;
             editor.select(target);
 
-            // Open Style Manager panel
-            editor.runCommand('open-sm'); 
-            editor.Panels.getButton('views', 'open-sm')?.set('active', true);
-            editor.Panels.getButton('views', 'open-blocks')?.set('active', false);  // highlight the button in header
+            // // Open Style Manager panel
+            // editor.runCommand('open-sm'); 
+            // editor.Panels.getButton('views', 'open-sm')?.set('active', true);
+            // editor.Panels.getButton('views', 'open-blocks')?.set('active', false);  // highlight the button in header
         });
 
        // Custom "Download / Import Template" command
@@ -661,6 +631,7 @@ export default function BasicEditor() {
             }
         });
 
+        // On load the canvas
         editor.on('load', () => {
             document.querySelectorAll('.gjs-block-category .gjs-title').forEach(titleEl => {
                 // prevent double icons
@@ -689,10 +660,8 @@ export default function BasicEditor() {
                 cat?.classList.toggle('collapsed');
             }
         });
-
-        // Register countdown ONCE when editor loads
-        registerCountdown(editor, countdownTraits);
         
+
         // When an image component is created, add custom toolbar
         editor.on('component:add', (component) => {
             if (component.get('type') === 'image') {
@@ -722,10 +691,235 @@ export default function BasicEditor() {
                 });
             }
         });
-        
-        
+        // Register countdown type
+        editor.DomComponents.addType('countdown', {
+            model: {
+                defaults: {
+                    tagName: 'div',
+                    classes: ['countdown'],
+                    traits: countdownTraits,
+                    selectable: true,
+                    copyable: true,
+                    draggable: true,
+                    startDate: '',
+                    format: 'dd:hh:mm:ss',
+                    endText: 'Time’s up!',
+                    components: [
+                        {
+                        tagName: 'div',
+                        classes: ['countdown-wrapper'],
+                        selectable: false,
+                        components: [
+                            { tagName: 'div', classes: ['countdown-unit'], selectable: false, components: [
+                                { tagName: 'div', classes: ['countdown-digit'], content: '00', selectable: false },
+                                { tagName: 'div', classes: ['countdown-label'], content: 'Days', selectable: false },
+                            ]
+                            },
+                            { type: 'textnode', content: ':', selectable: false },
+                            { tagName: 'div', classes: ['countdown-unit'], selectable: false, components: [
+                                { tagName: 'div', classes: ['countdown-digit'], content: '00', selectable: false },
+                                { tagName: 'div', classes: ['countdown-label'], content: 'Hours', selectable: false },
+                            ]
+                            },
+                            { type: 'textnode', content: ':', selectable: false },
+                            { tagName: 'div', classes: ['countdown-unit'], selectable: false, components: [
+                                { tagName: 'div', classes: ['countdown-digit'], content: '00', selectable: false },
+                                { tagName: 'div', classes: ['countdown-label'], content: 'Minutes', selectable: false },
+                            ]
+                            },
+                            { type: 'textnode', content: ':', selectable: false },
+                            { tagName: 'div', classes: ['countdown-unit'], selectable: false, components: [
+                                { tagName: 'div', classes: ['countdown-digit'], content: '00', selectable: false },
+                                { tagName: 'div', classes: ['countdown-label'], content: 'Seconds', selectable: false },
+                            ]
+                            },
+                        ]
+                        }
+                    ],
+                },
+            },
+            view: {
+                onRender({ el, model }: { el: HTMLElement; model: any }) {
+                let interval: any;
+                const wrapper = el.querySelector('.countdown-wrapper');
+                if (!wrapper) return;
 
-        
+                // Make inner elements unselectable
+                el.querySelectorAll('*').forEach((child) => child.setAttribute('data-gjs-selectable', 'false'));
+
+                const startCountdown = () => {
+                    if (interval) clearInterval(interval);
+
+                    // Restore wrapper if replaced by endText
+                    if (!wrapper.parentElement?.contains(wrapper)) {
+                    el.innerHTML = '';
+                    el.appendChild(wrapper);
+                    }
+
+                    const updateDisplay = () => {
+                    const startDateAttr = model.get('startDate');
+                    const endText = model.get('endText') || 'Time’s up!';
+
+                    if (!startDateAttr) {
+                        wrapper.querySelectorAll('.countdown-digit').forEach((d: any) => d.textContent = '00');
+                        return;
+                    }
+
+                    const targetDate = new Date(startDateAttr);
+                    const now = new Date();
+                    const diff = targetDate.getTime() - now.getTime();
+                    const totalSeconds = Math.max(Math.floor(diff / 1000), 0);
+
+                    if (diff <= 0) {
+                        el.innerHTML = endText;
+                        clearInterval(interval);
+                        return;
+                    }
+
+                    const days = Math.floor(totalSeconds / (24 * 3600));
+                    const hours = Math.floor((totalSeconds % (24 * 3600)) / 3600);
+                    const minutes = Math.floor((totalSeconds % 3600) / 60);
+                    const seconds = totalSeconds % 60;
+
+                    const format = model.get('format') || 'dd:hh:mm:ss';
+                    let values: string[] = [];
+
+                    if (format === 'dd:hh:mm:ss') {
+                        values = [
+                        String(days).padStart(2, '0'),
+                        String(hours).padStart(2, '0'),
+                        String(minutes).padStart(2, '0'),
+                        String(seconds).padStart(2, '0'),
+                        ];
+                    } else if (format === 'hh:mm:ss') {
+                        const totalHours = Math.floor(totalSeconds / 3600);
+                        values = [
+                        String(totalHours).padStart(2, '0'),
+                        String(minutes).padStart(2, '0'),
+                        String(seconds).padStart(2, '0'),
+                        '00',
+                        ];
+                    } else if (format === 'mm:ss') {
+                        const totalMinutes = Math.floor(totalSeconds / 60);
+                        values = [
+                        String(totalMinutes).padStart(2, '0'),
+                        String(seconds).padStart(2, '0'),
+                        '00',
+                        '00',
+                        ];
+                    }
+
+                    wrapper.querySelectorAll('.countdown-digit').forEach((d: any, i: number) => {
+                        d.textContent = values[i] || '00';
+                    });
+                    };
+
+                    updateDisplay();
+                    interval = setInterval(updateDisplay, 1000);
+                };
+
+                startCountdown();
+                model.on('change:startDate change:format', startCountdown);
+                model.once('destroy', () => clearInterval(interval));
+                },
+            },
+        });
+
+        // Add block using the type
+        editor.BlockManager.add('countdown', {
+            label: `<div style="text-align:center;"><i class="fa fa-clock-o gjs-block-map"></i><br/><span style="font-size:11px;">CountDown</span></div>`,
+            category: 'Extra',
+            content: { type: 'countdown' },
+        });
+
+        //Add horizontal tabs block
+        editor.BlockManager.add('tabs', {
+            id: 'tabs',
+            category: 'Extra',
+            label: `<div style="text-align:center;">
+                        <i class="fa fa-folder gjs-block-map"></i><br/>
+                        <span style="font-size:13px;">Tabs</span>
+                    </div>`,
+            content: {
+                tagName: 'div',
+                classes: ['tabs-container'],
+                traits: tabTraits,
+                selected: true,
+                components: [
+                { tagName: 'ul', classes: ['tabs'], components: [
+                    { tagName: 'li', classes: ['tab', 'active'], content: 'Tab 1' },
+                    { tagName: 'li', classes: ['tab'], content: 'Tab 2' },
+                    { tagName: 'li', classes: ['tab'], content: 'Tab 3' },
+                ] },
+                { tagName: 'div', classes: ['tab-content'], components: [
+                    { tagName: 'div', classes: ['tab-panel', 'active'], content: 'Editable content for Tab 1' },
+                    { tagName: 'div', classes: ['tab-panel'], content: 'Editable content for Tab 2' },
+                    { tagName: 'div', classes: ['tab-panel'], content: 'Editable content for Tab 3' },
+                ] },
+                ],
+                script: function () {
+                const el = this as unknown as HTMLElement;
+                const model = (this as any).model;
+
+                const bindTabs = () => {
+                    const tabs = el.querySelectorAll('.tab');
+                    const panels = el.querySelectorAll('.tab-panel');
+
+                    console.log('Binding tabs...', { tabs, panels });
+
+                    const switchTab = (idx: number) => {
+                        console.log(`Switching to tab index: ${idx}`);
+                        tabs.forEach(t => t.classList.remove('active'));
+                        panels.forEach(p => p.classList.remove('active'));
+                        tabs[idx].classList.add('active');
+                        panels[idx].classList.add('active');
+                    };
+
+                    // Bind click events
+                    tabs.forEach((tab, idx) => {
+                        (tab as HTMLElement).addEventListener('click', () => switchTab(idx));
+                    });
+
+                    // Update labels and content from traits
+                    console.log('Updating traits...', {
+                    tab1Label: model.get('tab1Label'),
+                    tab2Label: model.get('tab2Label'),
+                    tab3Label: model.get('tab3Label'),
+                    tab1Content: model.get('tab1Content'),
+                    tab2Content: model.get('tab2Content'),
+                    tab3Content: model.get('tab3Content'),
+                    direction: model.get('direction'),
+                    });
+
+                    tabs[0].textContent = model.get('tab1Label') || 'Tab 1';
+                    tabs[1].textContent = model.get('tab2Label') || 'Tab 2';
+                    tabs[2].textContent = model.get('tab3Label') || 'Tab 3';
+
+                    panels[0].textContent = model.get('tab1Content') || '';
+                    panels[1].textContent = model.get('tab2Content') || '';
+                    panels[2].textContent = model.get('tab3Content') || '';
+
+                    // Direction trait
+                    const direction = model.get('direction') || 'horizontal';
+                    el.classList.toggle('vertical', direction === 'vertical');
+                    console.log('Tab direction:', direction);
+                };
+
+                // Initial binding
+                bindTabs();
+
+                // Rebind whenever traits change
+                model.on(
+                    'change:direction change:tab1Label change:tab1Content change:tab2Label change:tab2Content change:tab3Label change:tab3Content',
+                    () => {
+                    console.log('Trait changed, rebinding...');
+                    bindTabs();
+                    }
+                );
+                },
+            },
+        });
+
         return () => editor.destroy(); // cleanup on unmount
     }, []);   
     return (
@@ -733,6 +927,4 @@ export default function BasicEditor() {
             <div id="gjs"></div>
         </div>
     );
-
-    
 }

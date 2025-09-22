@@ -211,31 +211,96 @@ label {
   background-color: #0056b3;
 }
 
-.countdown-row {
+.countdown-wrapper {
   display: flex;
-  justify-content: center;
-  gap: 10px;
+  align-items: center;
+  gap: 8px;
 }
 
-.countdown-item {
+.countdown-unit {
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 2px solid #ccc;
-  padding: 10px;
-  min-width: 70px;
-  border-radius: 4px;
-  background: #fff;
 }
 
 .countdown-digit {
-  font-size: 2rem;
+  font-size: 24px;
   font-weight: bold;
 }
 
 .countdown-label {
-  font-size: 0.9rem;
-  margin-top: 5px;
-  text-transform: lowercase;
-  color: #333;
+  font-size: 12px;
+  color: #555;
+}
+
+.tabs-container {
+    font-family: Arial, sans-serif;
+    width: 100%;
+    display: flex;
+    flex-direction: column; /* default horizontal */
+}
+
+.tabs-container.vertical {
+    flex-direction: row; /* vertical tabs layout */
+}
+
+.tabs {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    border-bottom: 2px solid #ccc;
+    cursor: pointer;
+}
+
+.tabs-container.vertical .tabs {
+    flex-direction: column;
+    border-bottom: none;
+    border-right: 2px solid #ccc;
+}
+
+.tab {
+    padding: 10px 20px;
+    background: #f0f0f0;
+    margin-right: 2px;
+    border-radius: 4px 4px 0 0;
+    border: 1px solid #ccc;
+    border-bottom: none;
+}
+
+.tabs-container.vertical .tab {
+    margin-bottom: 2px;
+    border-radius: 4px 0 0 4px;
+    border-right: none;
+}
+
+.tab.active {
+    background: #fff;
+    font-weight: bold;
+    border-bottom: 2px solid #fff;
+}
+
+.tabs-container.vertical .tab.active {
+    border-bottom: none;
+    border-right: 2px solid #fff;
+}
+
+.tab-content {
+    border: 1px solid #ccc;
+    border-radius: 0 4px 4px 4px;
+    padding: 15px;
+    background: #fff;
+}
+
+.tabs-container.vertical .tab-content {
+    flex: 1;
+    border-radius: 0 4px 4px 4px;
+}
+
+.tab-panel {
+    display: none;
+}
+
+.tab-panel.active {
+    display: block;
 }
