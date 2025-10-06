@@ -101,6 +101,7 @@ export default function BasicEditor() {
             { id: '1-column', cols: 1, labelText: '1 Column', contentTexts: ['1 Column'] },
             { id: '2-column', cols: 2, labelText: '2 Columns', contentTexts: ['Column 1', 'Column 2'] },
             { id: '3-column', cols: 3, labelText: '3 Columns', contentTexts: ['Col 1', 'Col 2', 'Col 3'] },
+            { id: '2-column-3-7', cols: 2, labelText: '2 Columns (3/7)', contentTexts: ['Col 1', 'Col 2'], customWidths: ['30%', '70%']},
         ];
 
         
@@ -316,20 +317,20 @@ export default function BasicEditor() {
             },
 
             // Image
-            {
-                id: 'image-upload',
-                label: `
-                    <div style="text-align:center;">
-                        <i class="fa fa-image gjs-block-inage"></i><br/>
-                        <span style="font-size: 13px;">Image</span>
-                    </div>
-                `,
-                category: 'Basic',
-                content: {
-                type: 'image',
-                attributes: { src: 'https://via.placeholder.com/300x150?text=Image', alt: 'Uploaded image' }
-                } as any
-            },
+            // {
+            //     id: 'image-upload',
+            //     label: `
+            //         <div style="text-align:center;">
+            //             <i class="fa fa-image gjs-block-inage"></i><br/>
+            //             <span style="font-size: 13px;">Image</span>
+            //         </div>
+            //     `,
+            //     category: 'Basic',
+            //     content: {
+            //     type: 'image',
+            //     attributes: { src: 'https://via.placeholder.com/300x150?text=Image', alt: 'Uploaded image' }
+            //     } as any
+            // },
 
             // Video
             {
@@ -437,7 +438,7 @@ export default function BasicEditor() {
             fromElement: false,
             canvas: { styles: ['/globals.css']},
             showDevices: false,
-            styleManager: { sectors: styleManagerSector}
+            styleManager: { sectors: styleManagerSector},
         });
 
         // Top right panel 
@@ -445,10 +446,9 @@ export default function BasicEditor() {
         
         //Block: Dynamically create columns
         columnBlocks.forEach(block => {
-            // Generate inner lines for label
-            const innerLines = block.cols > 1 ? '<div class="inner-lines"></div>'.repeat(block.cols - 1) : '';
-            
-            // Generate label HTML
+            const innerLines =
+                block.cols > 1 ? '<div class="inner-lines"></div>'.repeat(block.cols - 1) : '';
+
             const label = `
                 <div style="text-align:center">
                 <div class="gjs-block-col-${block.cols}" style="display:flex; gap:2px;">
@@ -459,23 +459,48 @@ export default function BasicEditor() {
                 </div>
             `;
 
-            // Generate content HTML
             const contentColumns = block.contentTexts
-                .map(text => `<div class="column gjs-block-col-2-content" style="flex:1; border:1px solid #ccc; padding:5px; margin-right:2px;">${text}</div>`)
+                .map((text, i) => {
+                const width = block.customWidths ? block.customWidths[i] : `${100 / block.cols}%`;
+                return `
+                    <div class="column gjs-block-col-${block.cols}-content"
+                        style="
+                        flex: 0 0 ${width};
+                        max-width: ${width};
+                        border: 1px solid #ccc;
+                        padding: 10px;
+                        min-height: 80px;
+                        box-sizing: border-box;
+                        ">
+                    ${text}
+                    </div>
+                `;
+                })
                 .join('');
-            const content = `<div class="row" style="display:flex;">${contentColumns}</div>`;
 
-            // Add block to GrapesJS
+            const content = `
+                <div class="row" style="
+                display: flex;
+                flex-wrap: nowrap;
+                justify-content: space-between;
+                align-items: stretch;
+                width: 100%;
+                ">
+                ${contentColumns}
+                </div>
+            `;
+
             editor.BlockManager.add(block.id, {
                 label: label,
                 content: content,
                 category: {
-                    id: 'layout',      
-                    label: 'Layout',
-                    open: true,
-                }
+                id: 'layout',
+                label: 'Layout',
+                open: true,
+                },
             });
         });
+
         
         // Block: Dynamically create form elements
         [ ...basicBlocks, ...formBlocks, ...extraBlocks].forEach(block => editor.BlockManager.add(block.id!, block));
@@ -661,7 +686,6 @@ export default function BasicEditor() {
             }
         });
         
-
         // When an image component is created, add custom toolbar
         editor.on('component:add', (component) => {
             if (component.get('type') === 'image') {
@@ -691,6 +715,7 @@ export default function BasicEditor() {
                 });
             }
         });
+
         // Register countdown type
         editor.DomComponents.addType('countdown', {
             model: {
@@ -919,6 +944,60 @@ export default function BasicEditor() {
                 },
             },
         });
+
+        editor.BlockManager.add('image-upload', {
+            label: `
+                <div style="text-align:center;">
+                <i class="fa fa-image gjs-block-image"></i><br/>
+                <span style="font-size:13px;">Image</span>
+                </div>
+            `,
+            category: 'Basic',
+            content: {
+                type: 'image',
+                attributes: {
+                    src: 'https://via.placeholder.com/300x150?text=Upload+Image',
+                    alt: 'Uploaded image',
+                },
+            },
+        });
+
+        // Handle image upload when block is selected
+        editor.on('component:selected', (component) => {
+            if (component.get('type') === 'image') {
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'image/*';
+
+                fileInput.onchange = async (e) => {
+                const file = (e.target as HTMLInputElement).files?.[0];
+                if (!file) return;
+
+                console.log('📤 Uploading file:', file.name);
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const res = await fetch('/api/grapes/upload', {
+                    method: 'POST',
+                    body: formData,
+                    });
+                    const data = await res.json();
+                    if (data.data?.[0]) {
+                    component.addAttributes({ src: data.data[0] });
+                    console.log('✅ Image uploaded to S3:', data.data[0]);
+                    }
+                } catch (err) {
+                    console.error('❌ Upload failed:', err);
+                }
+                };
+
+                fileInput.click();
+            }
+        });
+
+
 
         return () => editor.destroy(); // cleanup on unmount
     }, []);   
