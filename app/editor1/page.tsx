@@ -439,6 +439,44 @@ export default function BasicEditor() {
             canvas: { styles: ['/globals.css']},
             showDevices: false,
             styleManager: { sectors: styleManagerSector},
+            storageManager: false,
+            assetManager: {
+                upload: false, // Disable default uploader
+                uploadFile: async (e: any) => {
+                    const files = e.dataTransfer ? e.dataTransfer.files : e.target.files;
+                    if (!files?.length) return;
+
+                    console.log('Selected files:', files);
+
+                    // Prepare file to send
+                    const fd = new FormData();
+                    fd.append('file', files[0]);
+
+                    try {
+                        console.log('Uploading...');
+                        const res = await fetch('/api/grapes/upload', { method: 'POST',body: fd});
+                        
+                        const json = await res.json();
+                        console.log('Upload response:', json);
+
+                        // Expecting API response like: { data: ["https://example.com/image.jpg"] }
+                        if (json?.data?.[0]) {
+                        const url = json.data[0];
+
+                        // Add image to asset manager
+                        editor.AssetManager.add(url);
+
+                        // If image block selected, apply new src
+                        const selected = editor.getSelected();
+                        if (selected && selected.get('type') === 'image') {
+                            selected.addAttributes({ src: url });
+                        }
+                        }
+                    } catch (err) {
+                        console.error('Upload failed:', err);
+                    }
+                },
+            } as any,
         });
 
         // Top right panel 
@@ -962,43 +1000,29 @@ export default function BasicEditor() {
             },
         });
 
-        // Handle image upload when block is selected
-        editor.on('component:selected', (component) => {
-            if (component.get('type') === 'image') {
-                const fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.accept = 'image/*';
+        // Listen for remove action
+        editor.on('asset:remove', async (model: any) => {
+            const url = model.get('src'); // URL of the removed image
+            console.log('Asset removed:', url);
 
-                fileInput.onchange = async (e) => {
-                const file = (e.target as HTMLInputElement).files?.[0];
-                if (!file) return;
+            if (!url) return;
 
-                console.log('📤 Uploading file:', file.name);
-
-                const formData = new FormData();
-                formData.append('file', file);
-
-                try {
-                    const res = await fetch('/api/grapes/upload', {
-                    method: 'POST',
-                    body: formData,
-                    });
-                    const data = await res.json();
-                    if (data.data?.[0]) {
-                    component.addAttributes({ src: data.data[0] });
-                    console.log('✅ Image uploaded to S3:', data.data[0]);
-                    }
-                } catch (err) {
-                    console.error('❌ Upload failed:', err);
+            try {
+                const res = await fetch('/api/grapes/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url }),
+                });
+                const json = await res.json();
+                if (json.success) {
+                console.log('✅ File deleted from', json.deletedFrom);
+                } else {
+                console.warn('⚠️ Delete failed:', json.error);
                 }
-                };
-
-                fileInput.click();
+            } catch (err) {
+                console.error('Delete API error:', err);
             }
         });
-
-
-
         return () => editor.destroy(); // cleanup on unmount
     }, []);   
     return (
