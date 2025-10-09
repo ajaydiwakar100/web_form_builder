@@ -107,49 +107,7 @@ export default function BasicEditor() {
         
         // Blocks - Form elements
         const formBlocks: BlockProperties[] = [
-            // Form
-            {
-                id: 'form',
-                label: `
-                    <div style="text-align:center;">
-                        <i class="fa fa-wpforms gjs-block-map"></i><br/>
-                        <span style="font-size:13px;">Form</span>
-                    </div>
-                `,
-                category: 'Form',
-                content: {
-                tagName: 'form',
-                attributes: { action: '#', method: 'post' },
-                components: [
-                    {
-                    tagName: 'div',
-                    attributes: { class: 'form-group' },
-                    components: [
-                        { tagName: 'label', content: 'Name:', attributes: { for: 'name' } },
-                        { tagName: 'input', attributes: { type: 'text', name: 'name', placeholder: 'Enter your name', required: true } }
-                    ]
-                    },
-                    {
-                    tagName: 'div',
-                    attributes: { class: 'form-group' },
-                    components: [
-                        { tagName: 'label', content: 'Email:', attributes: { for: 'email' } },
-                        { tagName: 'input', attributes: { type: 'email', name: 'email', placeholder: 'Enter your email', required: true } }
-                    ]
-                    },
-                    {
-                    tagName: 'div',
-                    attributes: { class: 'form-group' },
-                    components: [
-                        { tagName: 'label', content: 'Message:', attributes: { for: 'message' } },
-                        { tagName: 'textarea', attributes: { name: 'message', placeholder: 'Enter your message', required: true, rows: 4 } }
-                    ]
-                    },
-                    { tagName: 'button', content: 'Submit', attributes: { type: 'submit', class: 'btn-submit' } }
-                ]
-                } as any
-            },
-
+        
             // Input Box
             {
                 id: 'input-box',
@@ -315,22 +273,6 @@ export default function BasicEditor() {
                 traits: textInputTraits
                 } as any
             },
-
-            // Image
-            // {
-            //     id: 'image-upload',
-            //     label: `
-            //         <div style="text-align:center;">
-            //             <i class="fa fa-image gjs-block-inage"></i><br/>
-            //             <span style="font-size: 13px;">Image</span>
-            //         </div>
-            //     `,
-            //     category: 'Basic',
-            //     content: {
-            //     type: 'image',
-            //     attributes: { src: 'https://via.placeholder.com/300x150?text=Image', alt: 'Uploaded image' }
-            //     } as any
-            // },
 
             // Video
             {
@@ -986,7 +928,7 @@ export default function BasicEditor() {
         editor.BlockManager.add('image-upload', {
             label: `
                 <div style="text-align:center;">
-                <i class="fa fa-image gjs-block-image"></i><br/>
+                <i class="fa fa-image gjs-block-image gjs-block-map"></i><br/>
                 <span style="font-size:13px;">Image</span>
                 </div>
             `,
@@ -1015,14 +957,93 @@ export default function BasicEditor() {
                 });
                 const json = await res.json();
                 if (json.success) {
-                console.log('✅ File deleted from', json.deletedFrom);
+                console.log(' File deleted from', json.deletedFrom);
                 } else {
-                console.warn('⚠️ Delete failed:', json.error);
+                console.warn('Delete failed:', json.error);
                 }
             } catch (err) {
                 console.error('Delete API error:', err);
             }
         });
+
+        editor.BlockManager.add('dynamic-form', {
+            id: 'form',
+            label: `
+                <div style="text-align:center;">
+                    <i class="fa fa-wpforms gjs-block-map"></i><br/>
+                    <span style="font-size:13px;">Form</span>
+                </div>
+            `,
+            category: 'Form',
+            content: {
+                tagName: 'form',
+                attributes: { action: '', method: 'post', webhook: 'http://example/api/webhook' },
+                traits: [
+                    { type: 'text', label: 'Action URL', name: 'action', placeholder: 'http://example/api/form' },
+                    { type: 'select', label: 'Method', name: 'method', options: [{ id: 'POST', name: 'POST' }, { id: 'GET', name: 'GET' }], value: 'post' },
+                    { type: 'text', label: 'Webhook URL', name: 'webhook', placeholder: 'http://example/api/webhook' }
+                ],
+                components: [
+                    {
+                    tagName: 'div',
+                    attributes: { class: 'form-group' },
+                    components: [
+                        { tagName: 'label', content: 'Name:', attributes: { for: 'name' } },
+                        { tagName: 'input', attributes: { type: 'text', name: 'name', placeholder: 'Enter your name', required: true } }
+                    ]
+                    },
+                    {
+                    tagName: 'div',
+                    attributes: { class: 'form-group' },
+                    components: [
+                        { tagName: 'label', content: 'Email:', attributes: { for: 'email' } },
+                        { tagName: 'input', attributes: { type: 'email', name: 'email', placeholder: 'Enter your email', required: true } }
+                    ]
+                    },
+                    {
+                    tagName: 'div',
+                    attributes: { class: 'form-group' },
+                    components: [
+                        { tagName: 'label', content: 'Message:', attributes: { for: 'message' } },
+                        { tagName: 'textarea', attributes: { name: 'message', placeholder: 'Enter your message', required: true, rows: 4 } }
+                    ]
+                    },
+                    { tagName: 'button', content: 'Submit', attributes: { type: 'submit', class: 'btn-submit' } }
+                ],
+                script: function () {
+                    const form = this;
+
+                    form.addEventListener('submit', async (e:any) => {
+                        e.preventDefault();
+
+                        const data: Record<string, any> = {};
+                        new FormData(form).forEach((value, key) => (data[key] = value));
+
+                        // Main form action
+                        const action = form.getAttribute('action') || '';
+                        const method = (form.getAttribute('method') || 'POST').toUpperCase();
+                        if (action) {
+                            fetch(action, { 
+                                method: method,
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(data) 
+                            });
+                        }
+
+                        // Optional webhook
+                        const webhook = form.getAttribute('webhook');
+                        if (webhook) {
+                        fetch(webhook, {
+                            method: method,
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        }).then(() => console.log('Webhook sent!'));
+                        }
+                    });
+                }
+            } as any
+        });
+
         return () => editor.destroy(); // cleanup on unmount
     }, []);   
     return (
