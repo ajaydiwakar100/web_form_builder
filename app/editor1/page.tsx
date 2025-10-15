@@ -274,22 +274,22 @@ export default function BasicEditor() {
                 } as any
             },
 
-            // Video
-            {
-                id: 'video-block',
-                category: 'Basic',
-                label: `
-                    <div style="text-align:center;">
-                        <i class="fa fa-play-circle gjs-block-video"></i><br/>
-                        <span style="font-size:13px;">Video</span>
-                    </div>
-                `,
-                content: {
-                type: 'video',
-                src: 'https://www.w3schools.com/html/mov_bbb.mp4',
-                attributes: { controls: true }
-                } as any
-            },
+            // // Video
+            // {
+            //     id: 'video-block',
+            //     category: 'Basic',
+            //     label: `
+            //         <div style="text-align:center;">
+            //             <i class="fa fa-play-circle gjs-block-video"></i><br/>
+            //             <span style="font-size:13px;">Video</span>
+            //         </div>
+            //     `,
+            //     content: {
+            //     type: 'video',
+            //     src: 'https://www.w3schools.com/html/mov_bbb.mp4',
+            //     attributes: { controls: true }
+            //     } as any
+            // },
 
             // Map
             {
