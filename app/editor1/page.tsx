@@ -1044,6 +1044,100 @@ export default function BasicEditor() {
             } as any
         });
 
+        editor.BlockManager.add('video-block', {
+            id: 'video-block',
+            category: 'Basic',
+            label: `
+                <div style="text-align:center;">
+                <i class="fa fa-play-circle gjs-block-video"></i><br/>
+                <span style="font-size:13px;">Video</span>
+                </div>
+            `,
+            content: {
+                type: 'video',
+                provider: 'html5',
+                src: 'https://www.w3schools.com/html/mov_bbb.mp4',
+                attributes: { controls: true },
+            },
+        });
+
+        // Add Video Block
+        editor.BlockManager.add('youtube-block', {
+            label: 'YouTube Video',
+            category: 'Basic',
+            content: {
+                type: 'youtube-video',
+                videoSrc: 'https://www.youtube.com/watch?v=VvHOntjmuHY',
+            },
+        });
+
+        editor.DomComponents.addType('multi-video', {
+            model: {
+                defaults: {
+                tagName: 'video', // default is video for MP4/S3
+                attributes: { controls: true },
+                traits: [
+                    { type: 'select', label: 'Provider', name: 'provider', options: [
+                    { id: 'youtube', name: 'YouTube' },
+                    { id: 'vimeo', name: 'Vimeo' },
+                    { id: 'html5', name: 'HTML5 / MP4' },
+                    { id: 's3', name: 'S3 Upload' },
+                    ], changeProp: true },
+                    { type: 'text', label: 'Video URL', name: 'videoSrc', changeProp: true },
+                ],
+                },
+
+                init() {
+                    this.listenTo(this, 'change:videoSrc change:provider', this.updateVideo);
+                },
+
+                updateVideo() {
+                    const src = this.get('videoSrc');
+                    const provider = this.get('provider');
+                    if (!src) return;
+
+                    if (provider === 'youtube') {
+                        alert("D");
+                        this.set('tagName', 'iframe');
+                        const id = (src.match(/[?&]v=([^&#]*)/) || src.match(/youtu\.be\/([^&#]*)/))?.[1];
+                        this.addAttributes({
+                        src: `https://www.youtube.com/embed/${id}`,
+                        frameborder: 0,
+                        allow: 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
+                        allowfullscreen: true,
+                        width: '100%',
+                        height: '315',
+                        });
+                    } else if (provider === 'vimeo') {
+                        this.set('tagName', 'iframe');
+                        const id = src.match(/vimeo\.com\/(\d+)/)?.[1];
+                        this.addAttributes({
+                        src: `https://player.vimeo.com/video/${id}`,
+                        frameborder: 0,
+                        allowfullscreen: true,
+                        width: '100%',
+                        height: '315',
+                        });
+                    } else {
+                        // HTML5 / S3
+                        this.set('tagName', 'video');
+                        this.addAttributes({
+                        src,
+                        controls: true,
+                        autoplay: this.get('autoplay') || false,
+                        loop: this.get('loop') || false,
+                        });
+                    }
+
+                    this.view?.render();
+                },
+            },
+        });
+
+
+
+
+
         return () => editor.destroy(); // cleanup on unmount
     }, []);   
     return (
