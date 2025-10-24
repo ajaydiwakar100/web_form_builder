@@ -1,31 +1,30 @@
-import { Text } from "./Text";
-import { Button } from "./Button";
-import { Container } from "./Container";
+import React from "react";
+import { Paper } from "@mui/material";
+import { Element, useNode } from "@craftjs/core";
+import { CardTop } from "./CardTop";
+import { CardBottom } from "./CardBottom";
 
-export const Card = ({
-  background = "#eee",
-  padding = 20,
-  title = "Title",
-  subTitle = "SubTitle",
-  fontSize = 20,
-}) => {
+export const Card = ({ background = "#fff" }) => {
+  const { connectors: { connect, drag } } = useNode();
+
   return (
-    <Container
-      background={background}
-      padding={padding}
+    <Paper
+      ref={(ref) => connect(drag(ref))}
+      elevation={3}
+      sx={{
+        background,
+        borderRadius: 2,
+        overflow: "hidden",
+        width: "100%",
+        cursor: "move",
+      }}
     >
-      <div className="text-only">
-        <Text text={title} fontSize={fontSize} />
-        <Text text={subTitle} fontSize={fontSize - 5} />
-      </div>
-      <div className="buttons-only">
-        <Button
-          size="small"
-          text="Learn more"
-          variant="contained"
-          color="primary"
-        >Learn More </Button>
-      </div>
-    </Container>
+      <CardTop />
+      <Element is={CardBottom} id="card-bottom" canvas />
+    </Paper>
   );
+};
+
+Card.craft = {
+  displayName: "Card",
 };

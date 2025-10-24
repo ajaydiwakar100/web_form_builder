@@ -12,6 +12,8 @@ import { Container } from "./components/user/Container";
 import { Button } from "./components/user/Button";
 import { Card } from "./components/user/Card";
 import { Text } from "./components/user/Text";
+import { CardTop } from "./components/user/CardTop";
+import { CardBottom } from "./components/user/CardBottom";
 
 import { Editor, Frame, Element } from "@craftjs/core";
 
@@ -19,47 +21,52 @@ export default function App() {
   return (
     
     <Box sx={{ margin: "0 auto", width: 960, p: 2 }}>
-        {/* Header */}
-        <Typography variant="h5" align="center">
-            A super simple page editor
-        </Typography>
+      {/* Header */}
+      <Typography variant="h5" align="center">
+        A super simple page editor
+      </Typography>
 
-        {/* Topbar */}
-        <Box sx={{ mt: 2 }}>
-            <Topbar />
+      {/* Topbar */}
+      <Box sx={{ mt: 2 }}>
+        <Topbar />
+      </Box>
+
+      {/* Editor + Sidebar */}
+      <Editor resolver={{ Card, Button, Text, Container,CardTop, CardBottom }}>
+        <Box sx={{ display: "flex", gap: 3, mt: 2 }}>
+          {/* Main content area */}
+          <Box sx={{ flex: 3 }}>
+            <Frame>
+              <Element
+                is={Container}
+                canvas
+                padding={5}
+                background="#eee"
+              >
+                <Card background="#fff" />
+                <Button size="small" color="primary" variant="outlined">Click</Button>
+                <Text text="Hi world!" />
+                <Element
+                  is={Container}
+                  canvas
+                  padding={6}
+                  background="#999"
+                >
+                  <Text text="It's me again!" />
+                </Element>
+              </Element>
+            </Frame>
+          </Box>
+
+          {/* Sidebar */}
+          <Box sx={{ flex: 1 }}>
+            <Paper sx={{ p: 2, backgroundColor: "#eee" }}>
+              <Toolbox />
+              <SettingsPanel />
+            </Paper>
+          </Box>
         </Box>
-
-        {/* Editor + Sidebar */}
-        <Editor resolver={{ Card, Button, Text, Container }}>
-            <Box sx={{ display: "flex", gap: 3, mt: 2 }}>
-            {/* Main content area */}
-            <Box sx={{ flex: 3 }}>
-                <Frame>
-                    <Container padding={5} background="#eee">
-                        <Card title="Hello" subTitle="Welcome" background="#fff"/>
-                            <Button size="small" variant="contained"   color="primary">
-                                Click
-                            </Button>
-                        <Text text="Hi world!"/>
-                            <Container padding={6} background="#999">
-                        {/* <Text fontSize="small" text="It's me again!" /> */}
-                        <Text  text="It's me again!" /> 
-                        </Container>
-                    </Container>
-                </Frame>
-            </Box>
-
-            {/* Sidebar */}
-            <Box sx={{ flex: 1 }}>
-                <Paper sx={{ p: 2, backgroundColor: "#eee" }}>
-                    <Toolbox />
-                    <SettingsPanel />
-                </Paper>
-            </Box>
-            </Box>
-        </Editor>
-    </Box>
-
-    
+      </Editor>
+    </Box>  
   );
 }
