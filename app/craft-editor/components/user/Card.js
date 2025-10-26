@@ -3,6 +3,8 @@ import { Paper } from "@mui/material";
 import { Element, useNode } from "@craftjs/core";
 import { CardTop } from "./CardTop";
 import { CardBottom } from "./CardBottom";
+import {ContainerSettings} from "./Container";
+import {ContainerDefaultProps} from "./Container";
 
 export const Card = ({ background = "#fff" }) => {
   const { connectors: { connect, drag } } = useNode();
@@ -27,4 +29,8 @@ export const Card = ({ background = "#fff" }) => {
 
 Card.craft = {
   displayName: "Card",
+  props: ContainerDefaultProps, 
+  related: {
+    settings: ContainerSettings
+  }
 };
