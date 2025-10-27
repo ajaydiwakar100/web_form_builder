@@ -26,13 +26,14 @@ export default function App() {
         A super simple page editor
       </Typography>
 
-      {/* Topbar */}
-      <Box sx={{ mt: 2 }}>
-        <Topbar />
-      </Box>
+     
 
       {/* Editor + Sidebar */}
       <Editor resolver={{ Card, Button, Text, Container,CardTop, CardBottom }}>
+         {/* Topbar */}
+        <Box sx={{ mt: 2 }}>
+          <Topbar />
+        </Box>
         <Box sx={{ display: "flex", gap: 3, mt: 2 }}>
           {/* Main content area */}
           <Box sx={{ flex: 3 }}>
