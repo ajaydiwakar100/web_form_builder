@@ -20,7 +20,7 @@ import { Editor, Frame, Element } from "@craftjs/core";
 export default function App() {
   return (
     
-    <Box sx={{ margin: "0 auto", width: 960, p: 2 }}>
+    <Box sx={{ margin: "0 auto", width: "100%", maxWidth: "1024px", p: 2}}>
       {/* Header */}
       <Typography variant="h5" align="center">
         A super simple page editor

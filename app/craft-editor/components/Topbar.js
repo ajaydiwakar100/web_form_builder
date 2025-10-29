@@ -5,13 +5,12 @@ import lz from "lzutf8";
 import copy from 'copy-to-clipboard';
 
 export const Topbar = () => {
-  const { actions, query, enabled, canUndo, canRedo } = useEditor((state, query) => {
-    return {
-      enabled: state.options.enabled,
-      canUndo: query.history.canUndo(),
-      canRedo: query.history.canRedo(),
-    };
-  });
+  const { actions, query, enabled, canUndo, canRedo } = useEditor((state, query) => ({
+    enabled: state.options.enabled,
+    canUndo: query.history.canUndo(),
+    canRedo: query.history.canRedo(),
+  }));
+
   const [dialogOpen, setDialogOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState();
   const [stateToLoad, setStateToLoad] = useState(null);
@@ -89,6 +88,34 @@ export const Topbar = () => {
           onClick={() => setDialogOpen(true)}
         >
           Load State
+        </MaterialButton>
+
+        {/* --- New Buttons --- */}
+        <MaterialButton
+          size="small"
+          variant="contained"
+          color="success"
+          onClick={() => alert("Save button clicked")}
+        >
+          Save
+        </MaterialButton>
+
+        <MaterialButton
+          size="small"
+          variant="contained"
+          color="info"
+          onClick={() => alert("Preview button clicked")}
+        >
+          Preview
+        </MaterialButton>
+
+        <MaterialButton
+          size="small"
+          variant="contained"
+          color="warning"
+          onClick={() => alert("Publish button clicked")}
+        >
+          Publish
         </MaterialButton>
       </Box>
 
